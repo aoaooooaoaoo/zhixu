@@ -1,0 +1,21 @@
+{
+  "name": "zhixu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "知序：把刷到的碎片，理成自己的知识。碎片内容 → AI 知识卡片 → 知识谱系 → 合并式思维导图。",
+  "homepage": "http://47.86.32.77:8080/",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build:web": "node web/build.js --clean",
+    "build:cf": "node cf/prepare.mjs",
+    "build:vps": "node deploy/vps/prepare.mjs",
+    "start:vps": "node deploy/vps/server.mjs",
+    "test": "node tests/integration.test.mjs && node tests/mcp.test.mjs && node tests/portability.test.mjs",
+    "test:vps": "node tests/vps.test.mjs",
+    "test:auth": "node tests/auth.test.mjs",
+    "test:cf": "node tests/cf.test.mjs"
+  }
+}

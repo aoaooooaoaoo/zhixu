@@ -1,0 +1,53 @@
+# ---------- 依赖 ----------
+node_modules/
+**/node_modules/
+
+# ---------- 构建产物 ----------
+web/dist/
+cf/dist/
+electron/dist/
+deploy/vps/_pkg/
+electron/release/
+electron/win-unpacked/
+*.tar.gz
+
+# ---------- 运行数据 / 日志 / 临时文件 ----------
+data/
+**/data/
+*.log
+*.pid
+working/
+app/data/
+
+# ---------- 本地抓取助手：浏览器登录态 profile（体积大、含隐私） ----------
+integrations/xhs/.profile/
+integrations/qq/installer/
+
+# ---------- 第三方参考材料（仅本地调研用，不随仓库分发） ----------
+reference/
+
+# ---------- 内部笔记（含服务器台账等敏感信息，不公开） ----------
+docs/server-notes.md
+
+# ---------- 用户原始草稿（含个人信息，按需自行决定是否提交） ----------
+MVP使用*.docx
+
+# ---------- 密钥 / 环境变量 ----------
+.env
+.env.*
+!.env.example
+cf/.dev.vars
+cf/.dev.vars.*
+!cf/.dev.vars.example
+deploy/vps/env.production
+deploy/vps/*.env
+!deploy/vps/env.example
+cf/.wrangler/
+
+# ---------- 系统 / 编辑器 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
