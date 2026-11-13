@@ -1,0 +1,44 @@
+{
+  "name": "zhixu-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "知序 · 桌面版（Electron 壳）",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run prebuild && electron .",
+    "prebuild": "node copy-dist.js",
+    "build": "npm run prebuild && electron-builder --win portable",
+    "build:dir": "npm run prebuild && electron-builder --win dir"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.zhixu.desktop",
+    "productName": "知序",
+    "asar": true,
+    "files": [
+      "main.js",
+      "app-server.js",
+      "dist/**/*",
+      "helper/**/*",
+      "build/icon.ico",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false,
+      "artifactName": "Zhixu-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Zhixu-portable-${version}.exe"
+    }
+  }
+}
