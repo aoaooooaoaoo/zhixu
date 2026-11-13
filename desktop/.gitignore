@@ -1,0 +1,4 @@
+# 桌面版登录态/窗口配置（含浏览器数据，不提交）
+.profile/
+node_modules/
+*.log
