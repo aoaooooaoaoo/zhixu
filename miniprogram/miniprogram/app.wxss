@@ -1,0 +1,267 @@
+/* 知序 · 全局设计系统（移植自网页版 styles.css） */
+
+page {
+  /* 颜色 */
+  --cream: #fbf6ee;
+  --paper: #fffdf8;
+  --ink: #2f2a24;
+  --ink-soft: #5c5349;
+  --muted: #918578;
+  --line: #eadfd2;
+  --line-strong: #ddcdbb;
+  --orange: #d9784a;
+  --orange-deep: #b95c35;
+  --orange-soft: #f7e3d5;
+  --sage: #7f9a84;
+  --sage-soft: #e7efe7;
+  --gold: #c8a26b;
+  --danger: #b4553f;
+
+  /* 圆角 / 阴影 */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-sm: 0 2px 6px rgba(73, 55, 38, 0.05);
+  --shadow-md: 0 12px 30px -14px rgba(73, 55, 38, 0.28);
+
+  background: var(--cream);
+  color: var(--ink);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 纸张底纹：用极淡的径向渐变模拟网页版的 grain，不额外占资源 */
+.page-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(217, 120, 74, 0.08), transparent 42%),
+    radial-gradient(circle at 82% 88%, rgba(127, 154, 132, 0.09), transparent 46%),
+    var(--cream);
+}
+
+.serif {
+  font-family: "Songti SC", "STSong", "Noto Serif SC", "SimSun", serif;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.ink-soft {
+  color: var(--ink-soft);
+}
+
+/* ---------- 布局 ---------- */
+.page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 24rpx 28rpx calc(40rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 8rpx 0 18rpx;
+}
+
+.section-title .t {
+  font-family: "Songti SC", "STSong", "Noto Serif SC", "SimSun", serif;
+  font-size: 34rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  color: var(--ink);
+}
+
+.section-title .hint {
+  font-size: 22rpx;
+  color: var(--muted);
+}
+
+/* ---------- 面板 ---------- */
+.panel {
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 28rpx;
+  box-sizing: border-box;
+}
+
+.panel + .panel {
+  margin-top: 22rpx;
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  padding: 0 30rpx;
+  height: 82rpx;
+  border-radius: 999rpx;
+  border: 1rpx solid var(--line-strong);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 28rpx;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+.btn::after {
+  border: none;
+}
+
+.btn-primary {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff9ef;
+  box-shadow: 0 10px 22px -12px rgba(185, 92, 53, 0.9);
+}
+
+.btn-primary[disabled] {
+  background: var(--line-strong) !important;
+  border-color: var(--line-strong) !important;
+  color: #fff !important;
+  box-shadow: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--orange-deep);
+  padding: 0 12rpx;
+  height: auto;
+  font-size: 25rpx;
+}
+
+.btn-sm {
+  height: 62rpx;
+  padding: 0 22rpx;
+  font-size: 24rpx;
+}
+
+.btn-row {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 22rpx;
+}
+
+.btn-row .btn {
+  flex: 1;
+}
+
+/* ---------- 输入 ---------- */
+.field-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--muted);
+  margin: 0 0 10rpx 4rpx;
+}
+
+.textarea,
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 20rpx 22rpx;
+  font-size: 27rpx;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.textarea {
+  min-height: 220rpx;
+}
+
+.input {
+  height: 84rpx;
+}
+
+.placeholder {
+  color: #b9ad9e;
+}
+
+/* ---------- 标签 / 徽章 ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  background: var(--orange-soft);
+  color: var(--orange-deep);
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.chip-sage {
+  background: var(--sage-soft);
+  color: #4f6a55;
+}
+
+.chip-line {
+  background: transparent;
+  border: 1rpx solid var(--line-strong);
+  color: var(--ink-soft);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  background: var(--sage-soft);
+  color: #4f6a55;
+  font-size: 21rpx;
+}
+
+.badge .dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: var(--sage);
+}
+
+.badge.local {
+  background: var(--orange-soft);
+  color: var(--orange-deep);
+}
+
+.badge.local .dot {
+  background: var(--orange);
+}
+
+/* ---------- 空状态 ---------- */
+.empty {
+  text-align: center;
+  padding: 90rpx 30rpx;
+  color: var(--muted);
+  font-size: 25rpx;
+}
+
+.empty .big {
+  display: block;
+  font-size: 60rpx;
+  margin-bottom: 18rpx;
+  opacity: 0.55;
+}
+
+/* ---------- 分割 ---------- */
+.divider {
+  height: 1rpx;
+  background: var(--line);
+  margin: 22rpx 0;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "zhixu-miniprogram",
+  "version": "1.0.0",
+  "private": true,
+  "description": "知序 · 微信小程序（原生 + 云开发）",
+  "scripts": {
+    "doctor": "node scripts/doctor.js",
+    "setup": "node scripts/setup.js",
+    "preview": "node scripts/upload.js --preview",
+    "upload": "node scripts/upload.js",
+    "check": "node scripts/doctor.js --strict"
+  }
+}

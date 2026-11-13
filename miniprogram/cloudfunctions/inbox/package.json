@@ -1,0 +1,9 @@
+{
+  "name": "inbox",
+  "version": "1.0.0",
+  "description": "知序 · 分享收件箱（外部投递的待归档链接）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

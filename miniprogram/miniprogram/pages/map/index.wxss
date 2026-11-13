@@ -1,0 +1,255 @@
+.head {
+  padding: 10rpx 4rpx 22rpx;
+}
+
+.eyebrow {
+  font-size: 22rpx;
+  color: var(--muted);
+  letter-spacing: 1rpx;
+}
+
+.h1 {
+  font-size: 56rpx;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 8rpx 0 10rpx;
+}
+
+.lede {
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.lede .em {
+  color: var(--orange-deep);
+  font-weight: 600;
+}
+
+.toolbar-panel {
+  padding: 22rpx 24rpx;
+}
+
+.tool-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 10rpx 0;
+}
+
+.tool-label {
+  font-size: 24rpx;
+  color: var(--ink-soft);
+  flex: none;
+}
+
+.picker-sm {
+  height: 66rpx;
+  line-height: 66rpx;
+  padding: 0 22rpx;
+  min-width: 200rpx;
+  text-align: right;
+  background: #fff;
+  border: 1rpx solid var(--line);
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  color: var(--ink);
+}
+
+.tool-slider {
+  gap: 10rpx;
+}
+
+.slider {
+  flex: 1;
+  margin: 0;
+}
+
+.threshold-val {
+  flex: none;
+  width: 70rpx;
+  text-align: right;
+  font-size: 24rpx;
+  color: var(--orange-deep);
+}
+
+.tool-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 26rpx;
+  margin-top: 10rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.canvas-wrap {
+  position: relative;
+  margin-top: 20rpx;
+  background: var(--paper);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.map-canvas {
+  width: 100%;
+  height: 900rpx;
+  display: block;
+}
+
+.canvas-hint {
+  position: absolute;
+  left: 20rpx;
+  bottom: 16rpx;
+  font-size: 20rpx;
+  color: var(--muted);
+  background: rgba(255, 253, 248, 0.86);
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+}
+
+.zoom-bar {
+  position: absolute;
+  right: 16rpx;
+  bottom: 14rpx;
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  background: rgba(255, 253, 248, 0.94);
+  border: 1rpx solid var(--line);
+  border-radius: 999rpx;
+  padding: 4rpx 8rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.zoom-btn {
+  width: 52rpx;
+  height: 52rpx;
+  line-height: 48rpx;
+  text-align: center;
+  font-size: 32rpx;
+  color: var(--ink-soft);
+  border-radius: 50%;
+}
+
+.zoom-text {
+  font-size: 20rpx;
+  color: var(--muted);
+  min-width: 66rpx;
+  text-align: center;
+}
+
+.detail-panel {
+  margin-top: 20rpx;
+}
+
+.detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.detail-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  line-height: 1.45;
+  margin-top: 8rpx;
+}
+
+.detail-count {
+  font-size: 22rpx;
+  margin-top: 8rpx;
+}
+
+.merge-reason {
+  margin-top: 18rpx;
+  padding: 18rpx 20rpx;
+  background: var(--sage-soft);
+  color: #4f6a55;
+  border-radius: var(--radius-sm);
+  font-size: 23rpx;
+  line-height: 1.7;
+}
+
+.diff-block {
+  margin-top: 16rpx;
+}
+
+.sub-label {
+  display: block;
+  margin: 20rpx 0 10rpx;
+  font-size: 22rpx;
+  color: var(--muted);
+}
+
+.diff-item {
+  padding: 14rpx 16rpx;
+  background: #f7efe4;
+  border-radius: 12rpx;
+  margin-bottom: 10rpx;
+}
+
+.diff-src {
+  display: block;
+  font-size: 20rpx;
+  color: var(--orange-deep);
+}
+
+.diff-text {
+  display: block;
+  font-size: 23rpx;
+  line-height: 1.6;
+  color: var(--ink);
+  margin-top: 4rpx;
+}
+
+.mini-card {
+  padding: 14rpx 16rpx;
+  border: 1rpx solid var(--line);
+  border-radius: 12rpx;
+  margin-bottom: 10rpx;
+  background: #fff;
+}
+
+.mini-title {
+  display: block;
+  font-size: 25rpx;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.mini-src {
+  display: block;
+  font-size: 20rpx;
+  color: var(--muted);
+  margin-top: 4rpx;
+}
+
+.empty {
+  padding: 90rpx 30rpx;
+  text-align: center;
+  color: var(--muted);
+  font-size: 25rpx;
+  line-height: 1.8;
+}
+
+.empty .big {
+  display: block;
+  font-size: 70rpx;
+  opacity: 0.5;
+  margin-bottom: 16rpx;
+}
+
+.empty-btn {
+  margin-top: 26rpx;
+}
+
+.foot-note {
+  margin-top: 26rpx;
+  font-size: 21rpx;
+  text-align: center;
+  line-height: 1.6;
+}

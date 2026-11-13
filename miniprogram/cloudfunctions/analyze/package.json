@@ -1,0 +1,9 @@
+{
+  "name": "analyze",
+  "version": "1.0.0",
+  "description": "知序 · 文本/链接 → 知识卡片（调用 LLM，key 只在云端）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,105 @@
+<view class="page-bg"></view>
+
+<view class="page">
+  <view class="head">
+    <view class="eyebrow">03 / 思维导图 · 让知识长成一棵树</view>
+    <view class="h1 serif">思维导图</view>
+    <view class="lede">
+      当前大点下 {{overview.cards}} 张卡片、{{overview.topics}} 个主题，其中
+      <text class="em">{{overview.merges}}</text> 个合并节点。
+    </view>
+  </view>
+
+  <!-- 工具条 -->
+  <view class="panel toolbar-panel" wx:if="{{hasTree}}">
+    <view class="tool-row">
+      <text class="tool-label">知识大点</text>
+      <picker mode="selector" range="{{categories}}" value="{{catIndex}}" bindchange="onCategoryChange">
+        <view class="picker picker-sm">{{categories[catIndex] || '—'}}</view>
+      </picker>
+    </view>
+
+    <view class="tool-row">
+      <text class="tool-label">合并相似卡片</text>
+      <switch checked="{{mergeOn}}" color="#d9784a" bindchange="onMergeChange" />
+    </view>
+
+    <view class="tool-row tool-slider">
+      <text class="tool-label">合并阈值</text>
+      <slider
+        class="slider"
+        min="25"
+        max="75"
+        step="5"
+        value="{{threshold * 100}}"
+        activeColor="#d9784a"
+        backgroundColor="#eadfd2"
+        block-size="20"
+        bindchange="onThresholdChange"
+        disabled="{{!mergeOn}}"
+      />
+      <text class="threshold-val">{{thresholdText}}</text>
+    </view>
+
+    <view class="tool-actions">
+      <text class="text-link" bindtap="resetView">复原视图</text>
+      <text class="text-link" bindtap="saveImage">导出图片</text>
+    </view>
+  </view>
+
+  <!-- 画布 -->
+  <view class="canvas-wrap" wx:if="{{hasTree}}">
+    <canvas
+      id="mapCanvas"
+      type="2d"
+      class="map-canvas"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd"
+    ></canvas>
+    <view class="canvas-hint">单指拖动平移 · 双指缩放 · 点节点看详情</view>
+    <view class="zoom-bar">
+      <view class="zoom-btn" bindtap="zoomOut">−</view>
+      <text class="zoom-text">{{zoomText}}</text>
+      <view class="zoom-btn" bindtap="zoomIn">+</view>
+    </view>
+  </view>
+
+  <!-- 节点详情 -->
+  <view class="panel detail-panel" wx:if="{{selected}}">
+    <view class="detail-head">
+      <view>
+        <text class="chip">{{selected.typeText}}</text>
+        <view class="detail-title serif">{{selected.label}}</view>
+      </view>
+      <text class="text-link" bindtap="clearSelection">收起</text>
+    </view>
+
+    <view class="detail-count muted">{{selected.count}} 张卡片</view>
+
+    <view wx:if="{{selected.reason}}" class="merge-reason">{{selected.reason}}</view>
+
+    <view wx:if="{{selected.differences.length}}" class="diff-block">
+      <text class="sub-label">细微差异</text>
+      <view class="diff-item" wx:for="{{selected.differences}}" wx:key="text">
+        <text class="diff-src">{{item.source}}</text>
+        <text class="diff-text">{{item.text}}</text>
+      </view>
+    </view>
+
+    <view class="sub-label">包含的卡片</view>
+    <view class="mini-card" wx:for="{{selected.cards}}" wx:key="title">
+      <text class="mini-title">{{item.title}}</text>
+      <text class="mini-src">{{item.sourceLabel}} · {{item.dateText}}</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!hasTree}}">
+    <text class="big">◌</text>
+    <text>{{totalCards ? '这张卡片还没有可展示的结构。' : '还没有卡片，先去收集页理一张吧。'}}</text>
+    <button class="btn btn-primary empty-btn" bindtap="goCollect">去收集</button>
+  </view>
+
+  <view class="foot-note muted">导图的根是「一个知识大点」，往下依次是主题、卡片 / 合并节点。</view>
+</view>

@@ -1,0 +1,127 @@
+<view class="page-bg"></view>
+
+<view class="page">
+  <!-- 页头 -->
+  <view class="hero">
+    <view class="eyebrow">01 / 收集 · 从刷到到留下</view>
+    <view class="hero-title serif">把刷到的<text class="em">好内容</text>，理成自己的知识。</view>
+    <view class="hero-lede">粘贴一段笔记，知序会提炼成一张带来源的知识卡片；确认后自动归档到知识库。</view>
+  </view>
+
+  <!-- 输入 -->
+  <view class="panel">
+    <view class="panel-head">
+      <text class="panel-title serif">新建知识卡片</text>
+      <view class="badge {{aiLabel === '本地规则' ? 'local' : ''}}">
+        <view class="dot"></view><text>{{aiLabel}}</text>
+      </view>
+    </view>
+
+    <text class="field-label">粘贴笔记内容</text>
+    <textarea
+      class="textarea"
+      value="{{text}}"
+      bindinput="onInputText"
+      placeholder="把小红书笔记、公众号段落、课程笔记粘贴到这里…"
+      placeholder-class="placeholder"
+      auto-height
+      maxlength="-1"
+    />
+    <view class="row-between">
+      <text class="muted small">{{charCount}} 字</text>
+      <text class="text-link" bindtap="fillSample">填入示例</text>
+    </view>
+
+    <view class="divider"></view>
+
+    <text class="field-label">帖子链接（可选）</text>
+    <view class="url-row">
+      <input
+        class="input url-input"
+        value="{{url}}"
+        bindinput="onInputUrl"
+        placeholder="https://www.xiaohongshu.com/..."
+        placeholder-class="placeholder"
+      />
+      <button class="btn btn-sm" bindtap="readLink" disabled="{{busy}}">读取链接</button>
+    </view>
+
+    <view class="note" wx:if="{{note}}">{{note}}</view>
+
+    <view class="steps">
+      <text class="step {{stepIndex >= 1 ? 'on' : ''}}">① 复制笔记</text>
+      <text class="step {{stepIndex >= 2 ? 'on' : ''}}">② 提炼卡片</text>
+      <text class="step {{stepIndex >= 3 ? 'on' : ''}}">③ 自动归档</text>
+    </view>
+
+    <button class="btn btn-primary block" bindtap="analyze" loading="{{busy}}" disabled="{{busy}}">
+      理成知识卡片
+    </button>
+  </view>
+
+  <!-- 解析结果：可编辑 -->
+  <view class="panel" wx:if="{{card}}">
+    <view class="panel-head">
+      <text class="panel-title serif">确认这张卡片</text>
+      <text class="muted small">可逐项修改</text>
+    </view>
+
+    <text class="field-label">标题</text>
+    <input class="input" value="{{card.title}}" bindinput="onEditTitle" maxlength="40" placeholder="一句话说清这张卡片" placeholder-class="placeholder" />
+
+    <text class="field-label">摘要</text>
+    <textarea class="textarea textarea-sm" value="{{card.summary}}" bindinput="onEditSummary" maxlength="160" auto-height placeholder="这张卡片讲了什么" placeholder-class="placeholder" />
+
+    <view class="field-row">
+      <view class="field-col">
+        <text class="field-label">分类</text>
+        <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+          <view class="picker">{{categories[categoryIndex]}}</view>
+        </picker>
+      </view>
+      <view class="field-col">
+        <text class="field-label">主题</text>
+        <input class="input" value="{{card.topic}}" bindinput="onEditTopic" maxlength="20" placeholder="如：早C晚A" placeholder-class="placeholder" />
+      </view>
+    </view>
+
+    <view wx:if="{{isNewCategory}}">
+      <text class="field-label">新分类名称</text>
+      <input class="input" value="{{newCategory}}" bindinput="onNewCategoryInput" maxlength="20" placeholder="给新分类起个名字" placeholder-class="placeholder" />
+    </view>
+
+    <text class="field-label">要点（一行一条）</text>
+    <textarea class="textarea textarea-sm" value="{{pointsText}}" bindinput="onEditPoints" auto-height placeholder="一条一个可执行要点" placeholder-class="placeholder" />
+
+    <text class="field-label">标签（逗号分隔）</text>
+    <input class="input" value="{{tagsText}}" bindinput="onEditTags" placeholder="敏感肌，屏障修护，早C晚A" placeholder-class="placeholder" />
+
+    <text class="field-label">金句</text>
+    <input class="input" value="{{card.quote}}" bindinput="onEditQuote" placeholder="原文里最值得留下的一句" placeholder-class="placeholder" />
+
+    <view class="field-row">
+      <view class="field-col">
+        <text class="field-label">来源</text>
+        <input class="input" value="{{card.sourceLabel}}" bindinput="onEditSource" placeholder="小红书 · @作者" placeholder-class="placeholder" />
+      </view>
+      <view class="field-col">
+        <text class="field-label">原链接</text>
+        <input class="input" value="{{card.url}}" bindinput="onEditUrl" placeholder="https://" placeholder-class="placeholder" />
+      </view>
+    </view>
+
+    <view class="archive-preview">
+      <text class="muted small">归档到</text>
+      <text class="chip">{{isNewCategory ? (newCategory || '未分类') : categories[categoryIndex]}}</text>
+      <text class="muted">›</text>
+      <text class="chip chip-sage">{{card.topic || '综合笔记'}}</text>
+    </view>
+
+    <view class="btn-row">
+      <button class="btn" bindtap="discard">放弃</button>
+      <button class="btn btn-primary" bindtap="save">保存到知识库</button>
+    </view>
+  </view>
+
+  <view class="foot-note muted">数据默认只存在你的微信本地；开启云开发后可后续接入云同步。</view>
+</view>

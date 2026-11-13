@@ -1,0 +1,142 @@
+<view class="page-bg"></view>
+
+<view class="page">
+  <view class="head">
+    <view class="eyebrow">02 / 知识库 · 你的谱系</view>
+    <view class="h1 serif">知识库</view>
+    <view class="lede">一张卡片是一个小点，一个主题是一根枝，一个分类是一个大点。</view>
+    <view class="stats">
+      <view class="stat"><text class="num serif">{{stats.cards}}</text><text class="lbl">卡片</text></view>
+      <view class="stat"><text class="num serif">{{stats.categories}}</text><text class="lbl">分类</text></view>
+      <view class="stat"><text class="num serif">{{stats.topics}}</text><text class="lbl">主题</text></view>
+      <view class="stat"><text class="num serif">{{stats.sources}}</text><text class="lbl">来源</text></view>
+    </view>
+  </view>
+
+  <view class="demo-banner" wx:if="{{isDemo}}">
+    <text>当前是示例数据，方便你先逛一圈；开始记录自己的内容后可随时清空。</text>
+    <text class="text-link" bindtap="clearDemo">清空示例</text>
+  </view>
+
+  <!-- 搜索 / 排序 / 导入导出 -->
+  <view class="toolbar">
+    <input
+      class="search"
+      value="{{search}}"
+      bindinput="onSearch"
+      placeholder="搜索标题、要点、标签、来源…"
+      placeholder-class="placeholder"
+      confirm-type="search"
+    />
+    <picker mode="selector" range="{{sortOptions}}" value="{{sortIndex}}" bindchange="onSortChange">
+      <view class="sort-picker">{{sortOptions[sortIndex]}}</view>
+    </picker>
+  </view>
+
+  <view class="toolbar-sub">
+    <text class="count">{{cards.length}} / {{allCount}} 张</text>
+    <view class="tools">
+      <text class="text-link" bindtap="exportData">导出</text>
+      <text class="text-link" bindtap="importData">导入</text>
+    </view>
+  </view>
+
+  <!-- 分类 / 主题筛选 -->
+  <scroll-view class="chips-scroll" scroll-x enable-flex wx:if="{{categories.length}}">
+    <view class="chips-row">
+      <view class="chip-filter {{category === '' ? 'on' : ''}}" data-cat="" bindtap="selectCategory">全部</view>
+      <view
+        class="chip-filter {{category === item ? 'on' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="*this"
+        data-cat="{{item}}"
+        bindtap="selectCategory"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="chips-scroll" scroll-x enable-flex wx:if="{{topics.length}}">
+    <view class="chips-row">
+      <view
+        class="chip-filter chip-topic {{topic === item ? 'on' : ''}}"
+        wx:for="{{topics}}"
+        wx:key="*this"
+        data-topic="{{item}}"
+        bindtap="selectTopic"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 卡片列表 -->
+  <view class="card-list" wx:if="{{cards.length}}">
+    <view
+      class="kcard"
+      wx:for="{{cards}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="openDetail"
+      style="--cat:{{item.color}};--cat-bg:{{item.soft}}"
+    >
+      <view class="kcard-bar"></view>
+      <view class="kcard-body">
+        <view class="kcard-meta">
+          <text class="chip chip-cat">{{item.category}}</text>
+          <text class="muted dot-sep">›</text>
+          <text class="muted topic">{{item.topic}}</text>
+        </view>
+        <view class="kcard-title serif">{{item.title}}</view>
+        <view class="kcard-summary" wx:if="{{item.summaryShort}}">{{item.summaryShort}}</view>
+        <view class="kcard-tags" wx:if="{{item.tagsText}}">{{item.tagsText}}</view>
+        <view class="kcard-foot">
+          <text class="src">{{item.sourceLabel}}</text>
+          <text class="muted">{{item.dateText}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="list-end muted">— 已经到底了 —</view>
+  </view>
+
+  <view class="empty" wx:else>
+    <text class="big">◌</text>
+    <text>{{allCount ? '换个筛选，或者回到收集页再理一张。' : '知识库还是空的，去收集页理出第一张卡片吧。'}}</text>
+    <button class="btn btn-primary empty-btn" bindtap="goCollect">去收集</button>
+  </view>
+</view>
+
+<!-- 卡片详情 -->
+<view class="sheet-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
+<view class="sheet" wx:if="{{showDetail}}">
+  <view class="sheet-handle"></view>
+  <scroll-view scroll-y class="sheet-scroll">
+    <view class="sheet-meta">
+      <text class="chip">{{detail.category}}</text>
+      <text class="muted">›</text>
+      <text class="chip chip-sage">{{detail.topic}}</text>
+    </view>
+    <view class="sheet-title serif">{{detail.title}}</view>
+    <view class="sheet-summary">{{detail.summary}}</view>
+
+    <view class="sub-title">要点</view>
+    <view class="point" wx:for="{{detail.points}}" wx:key="*this">· {{item}}</view>
+    <view class="muted small" wx:if="{{!detail.points.length}}">这张卡片没有要点</view>
+
+    <view class="quote" wx:if="{{detail.quote}}">「{{detail.quote}}」</view>
+
+    <view class="sub-title">标签</view>
+    <view class="sheet-tags">
+      <text class="chip chip-line" wx:for="{{detail.tags}}" wx:key="*this">{{item}}</text>
+      <text class="muted small" wx:if="{{!detail.tags.length}}">无</text>
+    </view>
+
+    <view class="sheet-src">
+      <text class="muted">来源：{{detail.sourceLabel}}</text>
+      <text class="muted" wx:if="{{detail.dateText}}"> · {{detail.dateText}}</text>
+    </view>
+    <text class="text-link" wx:if="{{detail.url}}" bindtap="copySource">复制原链接</text>
+
+    <view class="btn-row">
+      <button class="btn btn-danger" bindtap="askDelete">删除</button>
+      <button class="btn" bindtap="closeDetail">关闭</button>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "name": "resolve",
+  "version": "1.0.0",
+  "description": "知序 · 抓取公开网页正文（标题/描述/正文）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
