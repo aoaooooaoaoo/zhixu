@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "知序 · 小红书笔记收集",
+  "version": "0.1.0",
+  "description": "把当前小红书笔记（标题/正文/作者/标签）一键发送到本地知序的分享收件箱。",
+  "permissions": ["activeTab", "scripting", "contextMenus", "storage", "notifications"],
+  "host_permissions": [
+    "http://127.0.0.1:8788/*",
+    "http://localhost:8788/*",
+    "*://*.xiaohongshu.com/*",
+    "*://xhslink.cn/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_title": "发送到知序",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.xiaohongshu.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "send-to-zhixu": {
+      "suggested_key": { "default": "Ctrl+Shift+Y", "mac": "Command+Shift+Y" },
+      "description": "把当前笔记发送到知序"
+    }
+  }
+}

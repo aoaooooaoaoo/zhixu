@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { --cream:#fbf6ee; --ink:#2f2a24; --muted:#918578; --orange:#d9784a; --line:#eadfd2; }
+    * { box-sizing: border-box; }
+    body { width: 330px; margin: 0; padding: 16px; background: var(--cream); color: var(--ink);
+           font-family: "PingFang SC","Microsoft YaHei",sans-serif; font-size: 13px; }
+    .brand { display:flex; align-items:center; gap:8px; margin-bottom: 12px; }
+    .mark { width:28px; height:32px; border-radius:8px; background:linear-gradient(180deg,#e08a58,#c96f41);
+            color:#fff7eb; display:grid; place-items:center; font-family:Songti SC,serif; font-weight:700; }
+    .brand b { font-family:Songti SC,serif; font-size:16px; }
+    .brand small { color:var(--muted); display:block; font-size:10px; }
+    .hint { color:var(--muted); font-size:11px; line-height:1.6; margin:0 0 12px; }
+    button { width:100%; border:0; border-radius:999px; padding:9px 12px; font-weight:600; cursor:pointer; }
+    .primary { background:var(--orange); color:#fffaf3; }
+    .primary:disabled { opacity:.55; cursor:wait; }
+    .ghost { background:transparent; color:var(--ink); border:1px solid var(--line); margin-top:8px; }
+    .status { margin:10px 0 0; padding:8px 10px; border-radius:9px; background:#fffdf8; border:1px solid var(--line);
+              color:var(--muted); font-size:11px; line-height:1.55; min-height: 18px; white-space:pre-wrap; }
+    .status.ok { background:#e7efe7; color:#4d6955; border-color:rgba(127,154,132,.28); }
+    .status.err { background:#fff7ed; color:#8a5a12; border-color:rgba(245,158,11,.3); }
+    .foot { margin-top:10px; display:flex; justify-content:space-between; color:var(--muted); font-size:10px; }
+    a { color:var(--orange); text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="brand">
+    <div class="mark">知</div>
+    <div><b>知序</b><small>把小红书笔记发给本地知序</small></div>
+  </div>
+  <p class="hint">打开小红书笔记详情页，点下面的按钮；标题、正文、作者、话题会一起进入「分享收件箱」，再点「读取并归档」。</p>
+  <button class="primary" id="send">发送当前笔记到知序</button>
+  <button class="ghost" id="open">打开知序收件箱</button>
+  <div class="status" id="status">正在检查当前页面…</div>
+  <div class="foot"><span>快捷键 Ctrl+Shift+Y</span><span><a href="http://127.0.0.1:8788" target="_blank">打开知序</a></span></div>
+  <script src="popup.js"></script>
+</body>
+</html>
