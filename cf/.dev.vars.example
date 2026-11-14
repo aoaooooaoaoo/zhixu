@@ -1,0 +1,5 @@
+# Cloudflare Pages 本地开发变量示例（复制为 .dev.vars）
+WJ_LLM_API_KEY=your-spark-api-key
+WJ_LLM_BASE_URL=https://maas-api.cn-huabei-1.xf-yun.com/v2
+WJ_LLM_MODEL=spark-x2.6-4b
+WJ_LLM_EXTRA_BODY={"thinking":{"type":"disabled"}}

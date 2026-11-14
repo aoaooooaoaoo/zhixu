@@ -1,0 +1,13 @@
+name = "zhixu"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+# 账号/云同步需要 KV：先在 Cloudflare 控制台创建 KV namespace，
+# 然后把 id 填到下面（wrangler kv namespace create ZHIXU_KV 也会打印 id）
+[[kv_namespaces]]
+binding = "ZHIXU_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[vars]
+WJ_LLM_MODEL = "spark-x2.6-4b"
+WJ_LLM_BASE_URL = "https://maas-api.cn-huabei-1.xf-yun.com/v2"

@@ -1,0 +1,14 @@
+{
+  "name": "zhixu-cf",
+  "version": "1.0.0",
+  "private": true,
+  "description": "知序 · Cloudflare Pages 部署",
+  "scripts": {
+    "prepare": "node prepare.mjs",
+    "dev": "npm run prepare && wrangler pages dev dist --port 8788 --kv ZHIXU_KV --compatibility-date=2024-11-01",
+    "deploy": "npm run prepare && wrangler pages deploy dist --project-name zhixu"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
