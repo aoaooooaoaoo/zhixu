@@ -1,0 +1,27 @@
+[build]
+  publish = "dist"
+  functions = "functions"
+
+# 前端调用的是 /api/health、/api/resolve、/api/analyze，
+# 这里统一转发到 Netlify Functions，前端代码不需要改路径。
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+# HTML / JS / CSS 每次都回源校验，避免改了代码用户还看旧缓存
+[[headers]]
+  for = "/app.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
