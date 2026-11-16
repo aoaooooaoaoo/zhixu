@@ -1,0 +1,2452 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fbf6ee" />
+  <meta name="description" content="知序 · 把刷到的碎片，理成自己的知识。小红书笔记 AI 知识卡片与思维导图 MVP。" />
+  <title>知序 · 把刷到的碎片，理成自己的知识</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZTA4YTU4Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2M5NmY0MSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3QgeD0iOCIgeT0iMTIiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0NiIgcng9IjE0IiBmaWxsPSJ1cmwoI2cpIi8+CiAgPHJlY3QgeD0iMTYiIHk9IjUiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMCIgcng9IjQiIGZpbGw9IiNhOTY0M2UiLz4KICA8dGV4dCB4PSIzMiIgeT0iNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJTb25ndGkgU0MsIFNUU29uZywgc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmY3ZWIiPuefpTwvdGV4dD4KPC9zdmc+Cg==" />
+  
+  <style>
+/* ==========================================================================
+   知序 · Zhixu MVP
+   设计语言：奶油纸张 + 陶土橙 + 鼠尾草绿；圆润、安静、可阅读优先。
+   ========================================================================== */
+
+:root {
+  --cream: #fbf6ee;
+  --paper: #fffdf8;
+  --paper-2: #f7efe4;
+  --ink: #2f2a24;
+  --ink-soft: #5c5349;
+  --muted: #918578;
+  --line: #eadfd2;
+  --line-strong: #ddcdbb;
+  --orange: #d9784a;
+  --orange-deep: #b95c35;
+  --orange-soft: #f7e3d5;
+  --sage: #7f9a84;
+  --sage-soft: #e7efe7;
+  --gold: #c8a26b;
+  --danger: #b4553f;
+  --shadow-sm: 0 2px 6px rgba(73, 55, 38, 0.05);
+  --shadow-md: 0 12px 30px -14px rgba(73, 55, 38, 0.28);
+  --shadow-lg: 0 28px 60px -24px rgba(73, 55, 38, 0.35);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --font-body: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --font-serif: "Songti SC", "STSong", "Noto Serif SC", "SimSun", serif;
+  --max: 1180px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(1100px 500px at 8% -10%, #f9e7d8 0%, transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, #eef2e6 0%, transparent 55%),
+    var(--cream);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+::selection { background: var(--orange-soft); }
+
+.page-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(96, 74, 52, 0.055) 0.6px, transparent 0.7px);
+  background-size: 4px 4px;
+}
+
+/* ---------------------------------------------------------------- 顶栏 */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 18px 26px 14px;
+  backdrop-filter: blur(14px);
+  background: linear-gradient(to bottom, rgba(251, 246, 238, 0.92), rgba(251, 246, 238, 0.68));
+}
+.brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; min-width: 0; }
+.brand-mark {
+  position: relative;
+  width: 42px; height: 46px;
+  flex: none;
+  display: block;
+}
+.jar-lid {
+  position: absolute; left: 7px; top: 3px; width: 28px; height: 8px;
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(180deg, #c9865c, #a9643e);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+}
+.jar-body {
+  position: absolute; left: 4px; top: 10px; width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 11px 11px 13px 13px;
+  color: #fff7eb;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.28), transparent 45%),
+    linear-gradient(180deg, #e08a58, #c96f41);
+  box-shadow: 0 8px 14px -8px rgba(180, 92, 53, 0.75), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.brand-text strong { font-family: var(--font-serif); font-size: 21px; letter-spacing: .08em; }
+.brand-text small { color: var(--muted); font-size: 10.5px; letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tabs { display: flex; gap: 6px; padding: 4px; border-radius: 999px; background: rgba(255, 253, 248, 0.7); border: 1px solid var(--line); }
+.tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  border: 0; background: transparent; color: var(--ink-soft);
+  padding: 8px 16px; border-radius: 999px; font-size: 13.5px;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.tab-num { font-family: var(--font-serif); font-size: 10.5px; color: var(--muted); }
+.tab:hover { background: var(--paper-2); }
+.tab.is-active { background: var(--ink); color: #fff9ef; box-shadow: 0 6px 14px -8px rgba(47,42,36,.8); }
+.tab.is-active .tab-num { color: rgba(255,249,239,.6); }
+
+.top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.ai-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; color: var(--ink-soft);
+  border: 1px solid var(--line); background: rgba(255,253,248,.7);
+  padding: 6px 11px; border-radius: 999px; white-space: nowrap;
+}
+.ai-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.ai-badge.is-live .dot { background: var(--sage); box-shadow: 0 0 0 3px rgba(127,154,132,.16); }
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 12px; border: 1px solid var(--line);
+  background: rgba(255,253,248,.75); color: var(--ink-soft);
+  display: grid; place-items: center; transition: transform .2s ease, border-color .2s ease;
+}
+.icon-btn:hover { transform: translateY(-1px); border-color: var(--line-strong); }
+
+/* ---------------------------------------------------------------- 主区 */
+main { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; padding: 14px 26px 70px; outline: none; }
+.view { animation: viewIn .45s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0 0 14px; color: var(--orange-deep);
+  font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--orange); opacity: .65; }
+
+h1, h2, h3 { font-family: var(--font-serif); font-weight: 600; color: var(--ink); }
+h1 { font-size: clamp(34px, 4.6vw, 58px); line-height: 1.16; letter-spacing: -.01em; margin: 0; }
+h1 em { font-style: normal; color: var(--orange-deep); position: relative; }
+h1 em::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 5px; height: 8px;
+  background: rgba(217, 120, 74, .18); border-radius: 6px; z-index: -1;
+}
+.lede { color: var(--ink-soft); font-size: 15.5px; line-height: 1.9; max-width: 52ch; }
+
+/* ---------------------------------------------------------------- 收集 */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(280px, .82fr);
+  align-items: center;
+  gap: 36px;
+  padding: 34px 0 26px;
+}
+.hero-copy .lede { margin: 20px 0 24px; }
+.hero-steps { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: 12px; }
+.hero-steps .step { display: inline-flex; align-items: center; gap: 8px; }
+.hero-steps b { font-family: var(--font-serif); color: var(--orange-deep); font-size: 13px; }
+.hero-steps .arrow { color: var(--line-strong); }
+
+.jar-stage { position: relative; min-height: 300px; display: grid; place-items: center; }
+.jar-glow {
+  position: absolute; inset: 12% 6%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(217,120,74,.17), transparent 65%);
+  filter: blur(8px);
+}
+.jar-big {
+  position: relative; width: 176px; height: 214px;
+  border-radius: 34px 34px 42px 42px;
+  background:
+    linear-gradient(140deg, rgba(255,255,255,.55), transparent 42%),
+    linear-gradient(180deg, #f3c9a6, #e2a578);
+  border: 1px solid rgba(180, 120, 78, .22);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,.6);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+}
+.jar-big::before {
+  content: ""; position: absolute; top: -13px; left: 26px; right: 26px; height: 18px;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, #b9825c, #9e6a46);
+  box-shadow: 0 3px 0 rgba(105, 70, 43, .25);
+}
+.jar-big .jar-seal {
+  width: 76px; height: 76px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(255, 250, 240, .82);
+  border: 1px dashed rgba(159, 95, 55, .45);
+  color: var(--orange-deep);
+  font-family: var(--font-serif); font-size: 30px;
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.35);
+}
+.jar-big .jar-label { font-size: 10.5px; letter-spacing: .2em; color: #7d4a2d; }
+.jar-tag {
+  position: absolute; padding: 7px 12px; border-radius: 999px;
+  background: var(--paper); border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm); font-size: 11.5px; color: var(--ink-soft);
+  animation: float 5.5s ease-in-out infinite;
+}
+.jar-tag.t1 { top: 8%; left: 4%; animation-delay: -1s; }
+.jar-tag.t2 { top: 30%; right: 0%; animation-delay: -2.8s; }
+.jar-tag.t3 { bottom: 12%; left: 0%; animation-delay: -4.1s; }
+.jar-tag.t4 { bottom: 0%; right: 12%; animation-delay: -0.6s; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+.collect-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); gap: 18px; align-items: start; }
+.panel {
+  background: rgba(255, 253, 248, .86);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px 0; }
+.panel-title { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.panel-title .spark { color: var(--orange); }
+.mode-chip { font-size: 10.5px; color: var(--muted); border: 1px solid var(--line); padding: 4px 9px; border-radius: 999px; background: var(--paper); }
+
+.input-panel { padding-bottom: 16px; }
+.paste-area {
+  display: block; width: calc(100% - 40px); margin: 12px 20px 0;
+  min-height: 180px; resize: vertical;
+  border: 1px dashed var(--line-strong); border-radius: 14px;
+  background: var(--paper); padding: 15px 16px;
+  font-size: 13.5px; line-height: 1.85; color: var(--ink);
+  outline: none; transition: border-color .2s ease, box-shadow .2s ease;
+}
+.paste-area::placeholder { color: #b3a696; }
+.paste-area:focus { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(217,120,74,.08); }
+.input-foot { display: flex; align-items: center; gap: 12px; margin: 12px 20px 0; flex-wrap: wrap; }
+.url-input {
+  flex: 1 1 220px; min-width: 0; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); padding: 9px 12px; font-size: 12px; outline: none;
+}
+.url-input:focus { border-color: var(--orange); }
+.char-count { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.input-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 14px 20px 0; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid transparent; border-radius: 999px; padding: 10px 18px;
+  font-size: 13px; font-weight: 600; letter-spacing: .01em;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+}
+.btn:disabled { opacity: .55; cursor: wait; transform: none !important; }
+.btn-primary { background: var(--orange); color: #fffaf3; box-shadow: 0 10px 20px -12px rgba(185,92,53,.75); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-1px); background: var(--orange-deep); }
+.btn-ghost { background: transparent; color: var(--ink-soft); border-color: var(--line-strong); }
+.btn-ghost:hover { background: var(--paper-2); }
+.btn-dark { background: var(--ink); color: #fff9ef; }
+.btn-dark:hover { transform: translateY(-1px); }
+.btn-small { padding: 7px 13px; font-size: 12px; }
+.btn-danger { color: var(--danger); border-color: rgba(180,85,63,.3); background: rgba(180,85,63,.06); }
+.btn-link { border: 0; background: transparent; color: var(--orange-deep); padding: 4px 6px; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+
+.tips-panel { padding: 18px 20px 20px; }
+.tips-panel h3 { margin: 0 0 4px; font-size: 16px; }
+.tips-panel p { margin: 0 0 14px; color: var(--muted); font-size: 12px; }
+.tip-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.tip-list li { display: flex; gap: 10px; font-size: 12.5px; color: var(--ink-soft); line-height: 1.65; }
+.tip-list .ti { flex: none; width: 20px; height: 20px; border-radius: 7px; display: grid; place-items: center; background: var(--orange-soft); color: var(--orange-deep); font-family: var(--font-serif); font-size: 11px; }
+.sample-box { margin-top: 16px; padding: 12px 13px; border-radius: 12px; background: var(--paper-2); border: 1px dashed var(--line-strong); font-size: 11.5px; color: var(--ink-soft); line-height: 1.7; }
+
+/* 分析进度 */
+.analysis-progress { margin: 16px 20px 0; padding: 14px 16px; border-radius: 14px; background: var(--paper); border: 1px solid var(--line); }
+.analysis-progress .p-title { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; }
+.p-steps { display: grid; gap: 8px; }
+.p-step { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--muted); transition: color .2s ease; }
+.p-step .p-dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--line-strong); display: grid; place-items: center; flex: none; font-size: 9px; }
+.p-step.is-active { color: var(--ink); }
+.p-step.is-active .p-dot { border-color: var(--orange); background: var(--orange-soft); }
+.p-step.is-done { color: var(--sage); }
+.p-step.is-done .p-dot { border-color: var(--sage); background: var(--sage-soft); color: #55705f; }
+.p-step.is-done .p-dot::after { content: "✓"; }
+.p-step.is-active .p-dot::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: .35; transform: scale(.85); } 50% { opacity: 1; transform: scale(1); } }
+
+/* 解析结果 */
+.result-wrap { margin-top: 18px; animation: viewIn .4s both; }
+.result-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.result-head h2 { margin: 0; font-size: 21px; }
+.result-head .hint { font-size: 11.5px; color: var(--muted); }
+.result-card { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; padding: 20px; }
+.result-main { min-width: 0; }
+.field { margin-bottom: 13px; }
+.field label { display: block; font-size: 10.5px; letter-spacing: .08em; color: var(--muted); margin-bottom: 5px; }
+.field input, .field textarea, .field select {
+  width: 100%; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); padding: 9px 12px; font-size: 13px; outline: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(217,120,74,.08); }
+.field textarea { min-height: 74px; resize: vertical; line-height: 1.7; }
+.field-input { width: 100%; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); padding: 7px 10px; font-size: 11.5px; outline: none; }
+.field-input:focus { border-color: var(--orange); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 9px; border-radius: 999px; background: var(--paper-2);
+  border: 1px solid var(--line); font-size: 10.5px; color: var(--ink-soft);
+}
+.tag.is-accent { background: var(--orange-soft); border-color: rgba(217,120,74,.22); color: var(--orange-deep); }
+.result-side { border-left: 1px dashed var(--line); padding-left: 18px; display: flex; flex-direction: column; gap: 12px; }
+.meta-block { font-size: 11.5px; color: var(--muted); line-height: 1.7; }
+.meta-block b { display: block; font-size: 10px; letter-spacing: .12em; color: var(--muted); margin-bottom: 3px; font-weight: 600; }
+.meta-block .value { color: var(--ink-soft); font-size: 12.5px; }
+.result-actions { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+.source-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 8px; background: var(--paper-2); font-size: 11px; color: var(--ink-soft); }
+.source-pill a { color: var(--orange-deep); text-decoration: none; }
+
+/* 示例数据提示条 */
+.demo-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 8px 0 4px; padding: 10px 14px;
+  border: 1px dashed rgba(217,120,74,.35); border-radius: 12px;
+  background: rgba(247,227,213,.42); color: var(--ink-soft); font-size: 11.5px;
+}
+.demo-banner > span { display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.demo-banner b { color: var(--orange-deep); }
+
+/* ---------------------------------------------------------------- 知识库 */
+.page-head { padding: 26px 0 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+.page-head h1 { font-size: clamp(30px, 3.6vw, 44px); }
+.page-head .lede { margin: 10px 0 0; font-size: 13.5px; max-width: 60ch; }
+.stats-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat-chip { padding: 7px 12px; border-radius: 999px; background: rgba(255,253,248,.7); border: 1px solid var(--line); font-size: 11px; color: var(--ink-soft); }
+.stat-chip b { font-family: var(--font-serif); font-size: 15px; color: var(--ink); margin-right: 3px; }
+
+.library-grid { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 18px; align-items: start; }
+.tree-panel { padding: 16px 12px; position: sticky; top: 92px; max-height: calc(100vh - 120px); overflow: auto; }
+.tree-title { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 10px; font-size: 11px; letter-spacing: .12em; color: var(--muted); }
+.tree-cat { margin-bottom: 3px; }
+.tree-cat-head {
+  width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 8px 9px; border: 0; border-radius: 10px; background: transparent;
+  color: var(--ink); font-size: 12.5px; text-align: left;
+}
+.tree-cat-head:hover, .tree-cat-head.is-active { background: var(--paper-2); }
+.tree-cat-head .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.tree-cat-head .cat-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-cat-head .count { font-size: 10px; color: var(--muted); font-family: var(--font-serif); }
+.tree-cat-head .chev { transition: transform .2s ease; color: var(--muted); }
+.tree-cat.is-open .tree-cat-head .chev { transform: rotate(90deg); }
+.tree-topics { display: none; margin: 2px 0 6px 25px; border-left: 1px dashed var(--line); padding-left: 8px; }
+.tree-cat.is-open .tree-topics { display: block; }
+.tree-topic-head { width: 100%; border: 0; background: transparent; display: flex; align-items: center; gap: 7px; padding: 6px 8px; border-radius: 8px; font-size: 11.8px; color: var(--ink-soft); text-align: left; }
+.tree-topic-head:hover, .tree-topic-head.is-active { background: var(--paper-2); color: var(--ink); }
+.tree-topic-head .t-count { margin-left: auto; font-size: 9.5px; color: var(--muted); }
+.tree-cards { margin: 1px 0 4px 10px; display: none; }
+.tree-cat.is-open .tree-cards { display: block; }
+.tree-card-btn { width: 100%; border: 0; background: transparent; text-align: left; display: flex; align-items: center; gap: 7px; padding: 4px 7px; border-radius: 7px; font-size: 11px; color: var(--muted); }
+.tree-card-btn::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line-strong); flex: none; }
+.tree-card-btn:hover { background: var(--paper-2); color: var(--ink-soft); }
+.tree-card-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree-all { width: 100%; display: flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 8px 9px; border-radius: 10px; font-size: 12px; color: var(--ink-soft); }
+.tree-all.is-active { background: var(--ink); color: #fff9ef; }
+.tree-all .count { margin-left: auto; font-size: 10px; opacity: .7; }
+
+.cards-panel { min-width: 0; }
+.list-toolbar { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 12px; }
+.search-box { flex: 1 1 240px; position: relative; }
+.search-box input { width: 100%; border: 1px solid var(--line); background: rgba(255,253,248,.8); border-radius: 999px; padding: 9px 14px 9px 34px; font-size: 12.5px; outline: none; }
+.search-box input:focus { border-color: var(--orange); }
+.search-box svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.select { border: 1px solid var(--line); background: rgba(255,253,248,.8); border-radius: 999px; padding: 8px 28px 8px 12px; font-size: 11.5px; color: var(--ink-soft); outline: none; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 14px) 52%, calc(100% - 10px) 52%; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; }
+.result-count { font-size: 11px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 13px; }
+.kcard {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 16px 16px 13px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  overflow: hidden;
+  animation: cardIn .35s both;
+}
+@keyframes cardIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+.kcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+.kcard::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--cat, var(--orange)); opacity: .8; }
+.kcard-top { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+.kcard-cat { font-size: 10px; color: var(--cat, var(--orange-deep)); background: var(--cat-bg, var(--orange-soft)); padding: 3px 8px; border-radius: 999px; }
+.kcard-topic { font-size: 10px; color: var(--muted); }
+.kcard-title { margin: 0 0 6px; font-size: 16px; line-height: 1.45; font-family: var(--font-serif); }
+.kcard-summary { margin: 0 0 11px; font-size: 11.8px; color: var(--ink-soft); line-height: 1.75; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kcard-foot { display: flex; align-items: center; gap: 8px; border-top: 1px dashed var(--line); padding-top: 9px; font-size: 10px; color: var(--muted); }
+.kcard-foot .src { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kcard-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+.kcard-tags .tag { padding: 2px 7px; font-size: 9.5px; }
+.kcard-actions { position: absolute; right: 10px; top: 10px; display: flex; gap: 4px; opacity: 0; transition: opacity .2s ease; }
+.kcard:hover .kcard-actions { opacity: 1; }
+.kcard-actions button { border: 1px solid var(--line); background: var(--paper); width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: var(--muted); }
+.kcard-actions button:hover { color: var(--danger); border-color: rgba(180,85,63,.3); }
+
+.empty-state { padding: 54px 24px; text-align: center; border: 1px dashed var(--line-strong); border-radius: var(--radius); background: rgba(255,253,248,.55); }
+.empty-state .empty-icon { width: 54px; height: 54px; border-radius: 18px; background: var(--orange-soft); color: var(--orange-deep); display: grid; place-items: center; margin: 0 auto 14px; }
+.empty-state h3 { margin: 0 0 6px; font-size: 18px; }
+.empty-state p { margin: 0 0 16px; color: var(--muted); font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- 思维导图 */
+.map-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,253,248,.78); }
+.map-toolbar .group { display: flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--muted); }
+.map-toolbar .divider { width: 1px; height: 22px; background: var(--line); }
+.range-wrap { display: flex; align-items: center; gap: 8px; }
+input[type="range"] { accent-color: var(--orange); width: 110px; }
+.switch { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--ink-soft); cursor: pointer; }
+.switch input { accent-color: var(--orange); width: 14px; height: 14px; }
+.map-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.map-canvas {
+  position: relative; min-height: 620px; border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(247,227,213,.5), transparent 42%),
+    radial-gradient(circle at 82% 70%, rgba(231,239,231,.55), transparent 46%),
+    var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.map-canvas svg { display: block; width: 100%; height: 620px; cursor: grab; touch-action: none; }
+.map-canvas svg.is-panning { cursor: grabbing; }
+.map-hint { position: absolute; left: 14px; bottom: 12px; font-size: 10px; color: var(--muted); background: rgba(255,253,248,.82); border: 1px solid var(--line); padding: 4px 9px; border-radius: 999px; pointer-events: none; }
+.map-zoom { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 4px; }
+.map-zoom button { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,253,248,.9); color: var(--ink-soft); display: grid; place-items: center; font-size: 15px; line-height: 1; }
+.map-side { padding: 17px 18px; position: sticky; top: 92px; max-height: calc(100vh - 120px); overflow: auto; }
+.map-side h3 { margin: 0 0 3px; font-size: 17px; }
+.map-side .side-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+.side-sec { border-top: 1px dashed var(--line); padding: 12px 0 2px; }
+.side-sec h4 { margin: 0 0 7px; font-size: 10.5px; letter-spacing: .12em; color: var(--muted); font-weight: 600; }
+.side-sec p { margin: 0 0 8px; font-size: 12px; color: var(--ink-soft); line-height: 1.7; }
+.side-card { display: block; width: 100%; text-align: left; border: 1px solid var(--line); background: var(--paper); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; }
+.side-card:hover { border-color: var(--line-strong); background: var(--paper-2); }
+.side-card b { display: block; font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.side-card span { font-size: 10px; color: var(--muted); }
+.diff-list { margin: 0; padding-left: 15px; }
+.diff-list li { font-size: 11.5px; color: var(--ink-soft); margin-bottom: 7px; line-height: 1.6; }
+.diff-list li b { font-weight: 600; color: var(--ink); }
+.merge-note { padding: 10px 11px; border-radius: 10px; background: var(--sage-soft); border: 1px solid rgba(127,154,132,.24); font-size: 11.5px; color: #4d6955; line-height: 1.7; }
+.legend-row { display: flex; gap: 12px; flex-wrap: wrap; font-size: 10px; color: var(--muted); margin-top: 10px; }
+.legend-row span { display: inline-flex; align-items: center; gap: 5px; }
+.legend-row i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+/* SVG 导图节点 */
+.mnode { cursor: pointer; transition: filter .2s ease; }
+.mnode:hover { filter: brightness(1.02); }
+.mnode rect { transition: stroke .2s ease, transform .2s ease; }
+.mnode:hover rect { stroke: var(--orange); }
+.mnode text { pointer-events: none; font-family: var(--font-body); }
+.mnode .n-title { font-size: 12.5px; font-weight: 600; fill: var(--ink); }
+.mnode .n-sub { font-size: 10px; fill: var(--muted); }
+.mnode.type-root rect { fill: var(--ink); }
+.mnode.type-root .n-title { fill: #fff9ef; font-family: var(--font-serif); font-size: 16px; }
+.mnode.type-root .n-sub { fill: rgba(255,249,239,.6); }
+.mnode.type-topic rect { fill: var(--paper-2); stroke: var(--line-strong); }
+.mnode.type-merge rect { fill: var(--orange-soft); stroke: rgba(217,120,74,.35); }
+.mnode.type-card rect { fill: var(--paper); stroke: var(--line); }
+.mnode.type-merge .badge { fill: var(--orange); }
+.mlink { fill: none; stroke: var(--line-strong); stroke-width: 1.3; }
+.mlink.is-merge { stroke: rgba(217,120,74,.45); stroke-dasharray: 4 4; }
+.badge-text { font-size: 9px; fill: #fffaf3; font-weight: 600; }
+
+/* ---------------------------------------------------------------- 模态/提示 */
+.modal-root { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 20px; }
+.modal-root[hidden] { display: none; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(47,42,36,.38); backdrop-filter: blur(4px); animation: fadeIn .2s both; }
+.modal {
+  position: relative; width: min(680px, 100%); max-height: min(86vh, 860px); overflow: auto;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: var(--shadow-lg); padding: 24px 26px; animation: modalIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.modal-head h2 { margin: 0; font-size: 23px; line-height: 1.35; }
+.modal-close { border: 1px solid var(--line); background: var(--paper); width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--muted); flex: none; }
+.modal-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.modal-body p { margin: 0 0 10px; color: var(--ink-soft); font-size: 13.5px; line-height: 1.8; }
+.modal-body h4 { margin: 16px 0 7px; font-size: 11px; letter-spacing: .12em; color: var(--muted); }
+.modal-body ul { margin: 0; padding-left: 18px; }
+.modal-body li { font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; line-height: 1.65; }
+.modal-body blockquote { margin: 12px 0; padding: 10px 14px; border-left: 3px solid var(--orange); background: var(--paper-2); border-radius: 0 10px 10px 0; color: var(--ink-soft); font-size: 12.5px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+.settings-row:last-of-type { border-bottom: 0; }
+.settings-row .label { font-size: 12.5px; }
+.settings-row .desc { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+.settings-actions { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+
+.toast-wrap { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.toast {
+  pointer-events: auto; background: var(--ink); color: #fff9ef;
+  padding: 10px 18px; border-radius: 999px; font-size: 12.5px;
+  box-shadow: var(--shadow-md); animation: toastIn .25s cubic-bezier(.2,.8,.2,1) both;
+}
+.toast.is-error { background: var(--danger); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* ---------------------------------------------------------------- 页脚 */
+.site-foot {
+  position: relative; z-index: 1;
+  max-width: var(--max); margin: 0 auto; padding: 0 26px 28px;
+  color: var(--muted); font-size: 10.5px; display: flex; gap: 8px; flex-wrap: wrap;
+}
+.foot-sep { opacity: .5; }
+
+/* ---------------------------------------------------------------- 响应式 */
+@media (max-width: 980px) {
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .jar-stage { min-height: 240px; order: -1; }
+  .jar-big { width: 132px; height: 164px; }
+  .jar-big .jar-seal { width: 60px; height: 60px; font-size: 24px; }
+  .collect-grid, .map-grid { grid-template-columns: minmax(0, 1fr); }
+  .library-grid { grid-template-columns: minmax(0, 1fr); }
+  .tree-panel { position: static; max-height: none; }
+  .map-side { position: static; max-height: none; }
+  .result-card { grid-template-columns: minmax(0, 1fr); }
+  .result-side { border-left: 0; border-top: 1px dashed var(--line); padding-left: 0; padding-top: 14px; }
+  .result-actions { flex-direction: row; }
+  .topbar { grid-template-columns: 1fr auto; padding: 14px 18px; }
+  .tabs { grid-column: 1 / -1; justify-self: center; order: 3; }
+  .top-actions { grid-column: 2; }
+  main { padding: 10px 18px 60px; }
+}
+@media (max-width: 560px) {
+  body { font-size: 14px; }
+  .kcard-actions { opacity: 1; }
+  .brand-text small { display: none; }
+  .topbar { padding: 12px 14px 10px; gap: 10px; }
+  .tabs { width: 100%; gap: 2px; padding: 3px; }
+  .tab { flex: 1; justify-content: center; padding: 8px 4px; font-size: 12px; gap: 4px; white-space: nowrap; }
+  .tab-num { font-size: 9px; }
+  .jar-tag { display: none; }
+  .jar-stage { min-height: 190px; }
+  .jar-big { width: 118px; height: 148px; border-radius: 28px 28px 34px 34px; }
+  .jar-big .jar-seal { width: 54px; height: 54px; font-size: 22px; }
+  .jar-big .jar-label { font-size: 9px; }
+  .hero { padding-top: 18px; }
+  .hero .lede { font-size: 14px; }
+  .paste-area { width: calc(100% - 28px); margin: 10px 14px 0; }
+  .panel-head { padding: 14px 14px 0; }
+  .input-foot, .input-actions { margin-left: 14px; margin-right: 14px; }
+  .analysis-progress { margin-left: 14px; margin-right: 14px; }
+  .result-card { padding: 15px; }
+  .field-row { grid-template-columns: 1fr; }
+  .map-toolbar { gap: 8px; }
+  .map-toolbar .divider { display: none; }
+  .map-canvas, .map-canvas svg { min-height: 520px; height: 520px; }
+  .page-head { padding-top: 16px; }
+  .site-foot { padding: 0 14px 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* ---------------------------------------------------------------- 分享导入 / 收件箱 */
+.icon-btn.inbox-btn { position: relative; }
+.inbox-badge {
+  position: absolute; top: -5px; right: -5px; min-width: 16px; height: 16px;
+  padding: 0 4px; border-radius: 999px; background: var(--orange); color: #fffaf3;
+  font-size: 9px; line-height: 16px; text-align: center; border: 2px solid var(--cream);
+}
+.inbox-badge[hidden] { display: none; }
+.url-read-btn { flex: none; white-space: nowrap; }
+.link-status {
+  margin: 8px 20px 0; padding: 8px 11px; border-radius: 9px;
+  font-size: 11.5px; line-height: 1.6; background: var(--paper-2); color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+.link-status.is-ok { background: var(--sage-soft); border-color: rgba(127,154,132,.28); color: #4d6955; }
+.link-status.is-warn { background: #fff7ed; border-color: rgba(245,158,11,.3); color: #8a5a12; }
+.link-status.is-loading { background: var(--orange-soft); border-color: rgba(217,120,74,.25); color: var(--orange-deep); }
+.share-hint {
+  margin: 8px 20px 0; font-size: 10.5px; color: var(--muted);
+  display: flex; align-items: center; gap: 5px; line-height: 1.6;
+}
+.share-hint code { background: var(--paper-2); border: 1px solid var(--line); padding: 1px 4px; border-radius: 4px; font-size: 9.5px; }
+.inbox-panel {
+  margin: 10px 0 4px; padding: 14px 16px;
+  background: rgba(255, 253, 248, .88); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow-sm);
+}
+.inbox-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.inbox-head > div { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-soft); }
+.inbox-head b { color: var(--ink); }
+.inbox-head span { color: var(--muted); font-size: 10.5px; }
+.inbox-list { display: grid; gap: 7px; }
+.inbox-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 9px 11px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line);
+}
+.inbox-item-main { min-width: 0; }
+.inbox-item-title { font-size: 12px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inbox-item-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.inbox-item-actions { display: flex; gap: 6px; flex: none; }
+@media (max-width: 560px) {
+  .inbox-item { align-items: flex-start; flex-direction: column; }
+  .inbox-item-actions { width: 100%; }
+  .inbox-item-actions .btn { flex: 1; }
+  .input-foot { flex-wrap: wrap; }
+  .link-status, .share-hint { margin-left: 14px; margin-right: 14px; }
+}
+
+</style>
+</head>
+<body>
+  <div class="page-grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" data-nav="collect" aria-label="知序首页">
+      <span class="brand-mark" aria-hidden="true">
+        <span class="jar-lid"></span>
+        <span class="jar-body">知</span>
+      </span>
+      <span class="brand-text">
+        <strong>知序</strong>
+        <small>把刷到的碎片，理成自己的知识</small>
+      </span>
+    </a>
+
+    <nav class="tabs" aria-label="主导航">
+      <button class="tab is-active" type="button" data-nav="collect"><span class="tab-num">01</span>收集</button>
+      <button class="tab" type="button" data-nav="library"><span class="tab-num">02</span>知识库</button>
+      <button class="tab" type="button" data-nav="map"><span class="tab-num">03</span>思维导图</button>
+    </nav>
+
+    <div class="top-actions">
+      <span class="ai-badge" id="ai-badge" title="当前解析模式">
+        <span class="dot"></span><span id="ai-badge-text">本地演示</span>
+      </span>
+      <button class="icon-btn inbox-btn" id="btn-inbox" type="button" title="来自分享的链接" aria-label="分享收件箱" data-action="open-inbox">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v13H4z"/><path d="M4 13h4l2 3h4l2-3h4"/></svg>
+        <span class="inbox-badge" id="inbox-badge" hidden>0</span>
+      </button>
+      <button class="icon-btn" id="btn-settings" type="button" title="设置与数据" aria-label="设置与数据">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6h.09A1.7 1.7 0 0 0 10.1 3.05V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.09a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1"></main>
+
+  <footer class="site-foot">
+    <span>知序 MVP · 本地优先，数据只存在你的浏览器</span>
+    <span class="foot-sep">·</span>
+    <span>灵感来自小红书笔记，沉淀成自己的知识谱系</span>
+  </footer>
+
+  <div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
+  <div class="modal-root" id="modal-root" hidden></div>
+
+  <script>
+/* ==========================================================================
+   知序 · Zhixu MVP
+   纯前端（无构建、无依赖），localStorage 持久化；启动 server.py 后自动切换真 AI。
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  /* ---------------------------------------------------------------- 常量 */
+  const STORE_KEY = 'zhixu.mvp.v1';
+  const LEGACY_STORE_KEY = 'wenjiang.mvp.v1';
+  const PAGE_TITLES = { collect: '收集', library: '知识库', map: '思维导图' };
+
+  const CATEGORY_DEFS = [
+    { name: '护肤与美妆', color: '#c97862', soft: '#f7e4dc', keywords: ['护肤', '皮肤', '敏感肌', '屏障', '早C晚A', '早c晚a', '精华', '面霜', '防晒', '痘痘', '闭口', '成分', '美白', '抗老', '卸妆', '面膜', '油皮', '干皮', '刷酸', '保湿', '粉底', '口红'], topics: ['早C晚A', '屏障修护', '防晒', '成分党', '痘痘急救', '底妆'] },
+    { name: '学习与效率', color: '#7c9782', soft: '#e7efe7', keywords: ['学习', '笔记', '效率', '时间管理', '番茄钟', '专注', '拖延', '复盘', '记忆', '考试', '读书', '方法论', '思维导图', '自律', '计划', '输入', '输出'], topics: ['笔记方法', '时间管理', '阅读方法', '考试复盘', '知识管理'] },
+    { name: '职场与成长', color: '#b18456', soft: '#f2e7d7', keywords: ['职场', '面试', '简历', '沟通', '汇报', '升职', '同事', '领导', '项目', '表达', '谈判', '实习', '跳槽', '述职'], topics: ['面试表达', '向上沟通', '简历优化', '项目复盘', '职场边界'] },
+    { name: '健康与生活', color: '#7f9eaf', soft: '#e4eef2', keywords: ['睡眠', '熬夜', '健身', '减脂', '饮食', '养生', '运动', '情绪', '内耗', '焦虑', '冥想', '早餐', '久坐', '颈椎', '散步'], topics: ['睡眠', '减脂', '情绪调节', '日常养生', '运动习惯'] },
+    { name: '穿搭与风格', color: '#b98aa0', soft: '#f4e6ec', keywords: ['穿搭', '显瘦', '通勤', '配色', '风格', '衣橱', '裙子', '牛仔裤', '鞋', '配饰', '小个子', '梨形', '基础款'], topics: ['通勤穿搭', '显瘦思路', '基础款', '配色', '小个子'] },
+    { name: '美食与旅行', color: '#c39a5d', soft: '#f6ead7', keywords: ['美食', '咖啡', '探店', '旅行', '攻略', '酒店', '机票', '路线', '城市', '拍照', '露营', '徒步', '餐厅'], topics: ['城市攻略', '咖啡探店', '旅行路线', '露营', '拍照机位'] },
+    { name: '理财与搞钱', color: '#8f9066', soft: '#eeeedb', keywords: ['理财', '存钱', '记账', '基金', '消费', '预算', '搞钱', '副业', '保险', '月光', '储蓄', '收入'], topics: ['存钱方法', '记账', '副业', '消费降级', '基础理财'] },
+    { name: '家居与收纳', color: '#94a68d', soft: '#e9efe4', keywords: ['家居', '收纳', '装修', '房间', '清洁', '好物', '租房', '改造', '桌面', '灯光'], topics: ['收纳', '租房改造', '清洁', '桌面布置', '灯光'] },
+    { name: '数码与工具', color: '#8b95ad', soft: '#e8ebf2', keywords: ['数码', '手机', '电脑', 'APP', 'app', '工具', 'AI', 'ai', '效率工具', '摄影', '相机', 'iPad', 'ipad'], topics: ['效率工具', 'AI 工具', '摄影', '设备选择', '工作流'] },
+    { name: '情绪与关系', color: '#b58989', soft: '#f3e6e6', keywords: ['情绪', '关系', '恋爱', '朋友', '边界', '沟通', '自我', '原生家庭', '亲密关系', '拒绝', '讨好'], topics: ['边界感', '亲密关系', '自我觉察', '沟通', '情绪急救'] }
+  ];
+
+  const EXTRA_COLORS = ['#b7835f', '#8f9b7d', '#a9849a', '#7f98a6', '#b09562', '#9b8aa8'];
+
+  const SAMPLE_TEXT = `早C晚A真的适合所有人吗？作为一个被烂脸教育过的敏感肌，我想说：先别急着照抄。
+
+我曾经连续两周早C晚A，结果脸颊泛红、刺痛，后来才知道敏感肌要先修屏障。现在我的顺序是：早上清水洗脸 + 保湿 + 防晒，晚上用低浓度A醇，一周两次，中间穿插修护面霜。
+
+如果你也是敏感肌，建议先做三件事：1）停掉所有酸类和猛药；2）用成分简单的修护霜；3）防晒优先于美白。等皮肤稳定一个月，再考虑早C晚A。
+
+#护肤 #敏感肌 #早C晚A #屏障修护 #成分党`;
+
+  const DEMO_CARDS = [
+    {
+      title: '敏感肌别照抄早C晚A：先修屏障',
+      summary: '作者用两周早C晚A烂脸的经历提醒敏感肌：先停猛药、用简单修护霜、把防晒放在美白前面，稳定一个月再考虑功效产品。',
+      points: ['敏感肌先停酸类和猛药，减少叠加刺激', '修护期用成分简单的面霜，防晒优先于美白', '皮肤稳定一个月后再逐步引入低浓度A醇'],
+      tags: ['早C晚A', '敏感肌', '屏障修护'], category: '护肤与美妆', topic: '早C晚A',
+      quote: '敏感肌要先修屏障，再谈早C晚A。', sourceLabel: '小红书 · @小鹿的护肤笔记', url: '',
+      createdAt: '2026-11-02T10:20:00+08:00'
+    },
+    {
+      title: '早C晚A翻车后，我改成了「一周两次」',
+      summary: '从每天早C晚A改成一周两次低浓度A醇，中间穿插修护和纯保湿，泛红明显减少；作者强调频率比浓度更重要。',
+      points: ['新手从一周两次开始，不要天天上脸', 'A醇后第二天必须防晒', '出现刺痛就停用，先修护再继续'],
+      tags: ['早C晚A', 'A醇', '敏感肌'], category: '护肤与美妆', topic: '早C晚A',
+      quote: '频率比浓度更重要，皮肤稳定才是长期主义。', sourceLabel: '小红书 · @成分实验室', url: '',
+      createdAt: '2026-11-04T21:05:00+08:00'
+    },
+    {
+      title: '屏障修护期，我只留三样东西',
+      summary: '换季烂脸时把护肤步骤砍到三步：温和清洁、修护面霜、硬防晒；不叠加精华，不给皮肤增加额外负担。',
+      points: ['烂脸期做减法，不叠加功效精华', '硬防晒（帽子/口罩）比防晒霜更稳', '修护至少坚持 28 天再评估'],
+      tags: ['屏障修护', '换季', '精简护肤'], category: '护肤与美妆', topic: '屏障修护',
+      quote: '皮肤在报警的时候，做减法比做加法有用。', sourceLabel: '小红书 · @一颗圆白菜', url: '',
+      createdAt: '2026-11-05T09:40:00+08:00'
+    },
+    {
+      title: '我放弃番茄钟之后，反而更专注了',
+      summary: '作者发现强制 25 分钟休息会打断心流，改成按任务阶段工作、只在自然停顿处休息，并用一张纸记录分心念头。',
+      points: ['按任务阶段而不是固定时钟工作', '分心时先记在纸上，不立刻切换', '每天只安排 1 个「必须完成」的核心任务'],
+      tags: ['时间管理', '专注', '效率'], category: '学习与效率', topic: '时间管理',
+      quote: '专注不是盯住时钟，而是让任务本身有牵引力。', sourceLabel: '小红书 · @效率实验室', url: '',
+      createdAt: '2026-11-01T19:12:00+08:00'
+    },
+    {
+      title: '小红书爆款笔记的 3 个开头结构',
+      summary: '拆了 100 篇高赞笔记后，作者总结出三种开头：反常识结论、具体场景痛点、结果前置；共同点是 3 秒内给出继续读的理由。',
+      points: ['反常识结论：先打破预期，再给证据', '具体场景：让读者立刻对号入座', '结果前置：先展示变化，再讲过程'],
+      tags: ['笔记方法', '内容创作', '小红书'], category: '学习与效率', topic: '笔记方法',
+      quote: '开头不是铺垫，是给读者一个继续读下去的理由。', sourceLabel: '小红书 · @内容手艺人', url: '',
+      createdAt: '2026-11-03T14:30:00+08:00'
+    },
+    {
+      title: '面试讲项目，用 STAR 就够了',
+      summary: '把项目拆成情境、任务、行动、结果四段，每段只讲一个重点；结果尽量量化，失败项目也要讲清楚复盘。',
+      points: ['情境一句话交代背景，不铺陈', '行动部分突出「我」而不是「我们」', '结果带数字，失败项目讲复盘'],
+      tags: ['面试表达', '职场', 'STAR'], category: '职场与成长', topic: '面试表达',
+      quote: '面试官不关心项目多大，关心你在里面做了什么判断。', sourceLabel: '小红书 · @offer陪跑员', url: '',
+      createdAt: '2026-10-29T08:15:00+08:00'
+    },
+    {
+      title: '睡前 1 小时断网，救我狗命',
+      summary: '把手机放到客厅、用纸质书替代刷视频，入睡时间从 1 点提前到 11 点半；作者建议先断「信息流」而不是断所有屏幕。',
+      points: ['睡前 1 小时把手机移出卧室', '用低刺激的纸质书替代短视频', '固定起床时间比固定睡觉时间更有效'],
+      tags: ['睡眠', '熬夜', '习惯'], category: '健康与生活', topic: '睡眠',
+      quote: '不是睡不着，是大脑还在等信息流的下一条。', sourceLabel: '小红书 · @早睡俱乐部', url: '',
+      createdAt: '2026-10-27T22:45:00+08:00'
+    },
+    {
+      title: '365 天存钱法，适合月光族',
+      summary: '每天存 1–365 元中未使用的数字，一年最多可存 66795 元；作者建议从每天 10 元开始，先建立「存钱肌肉」。',
+      points: ['把 1–365 做成表格，每天划掉一个数字', '收入不稳定时改成按周存', '存钱账户单独放，不绑定支付软件'],
+      tags: ['存钱', '理财', '月光族'], category: '理财与搞钱', topic: '存钱方法',
+      quote: '存钱不是等有剩余，而是先把一部分拿走。', sourceLabel: '小红书 · @小钱罐', url: '',
+      createdAt: '2026-10-25T12:00:00+08:00'
+    }
+  ];
+
+  /* ---------------------------------------------------------------- 工具 */
+  const escMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => escMap[c]); }
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || '')) ? String(u) : ''; }
+  function uid(prefix) { return (prefix || 'id') + '_' + Date.now().toString(36) + Math.random().toString(16).slice(2, 7); }
+  function clamp(n, a, b) { return Math.min(b, Math.max(a, n)); }
+  function truncate(s, n) { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+  function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function hash(s) { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+  function delay(ms) { return new Promise((r) => setTimeout(r, ms)); }
+  function fmtDate(iso) { try { const d = new Date(iso); return `${d.getMonth() + 1}月${d.getDate()}日`; } catch { return ''; } }
+
+  function categoryInfo(name) {
+    const found = CATEGORY_DEFS.find((c) => c.name === name);
+    if (found) return found;
+    const color = EXTRA_COLORS[hash(name || '其他') % EXTRA_COLORS.length];
+    return { name, color, soft: color + '22', keywords: [], topics: [] };
+  }
+
+  function allCategoryNames() {
+    const names = CATEGORY_DEFS.map((c) => c.name);
+    data.cards.forEach((c) => { if (c.category && names.indexOf(c.category) < 0) names.push(c.category); });
+    return names;
+  }
+
+  function hashtagsOf(text) {
+    const out = [];
+    String(text || '').replace(/#([^#\s，。！？、,.!?]{1,16})/g, (_, tag) => { out.push(tag.trim()); return ''; });
+    return out;
+  }
+
+  function extractUrl(text) {
+    const m = String(text || '').match(/https?:\/\/[^\s，。！？]+/i);
+    return m ? m[0].replace(/[),.]+$/, '') : '';
+  }
+
+  function sourceFromUrl(url, text) {
+    const u = safeUrl(url);
+    let label = '手动粘贴';
+    if (u) {
+      let host = '';
+      try { host = new URL(u).hostname.replace(/^www\./, ''); } catch { host = ''; }
+      const map = { 'xiaohongshu.com': '小红书', 'weibo.com': '微博', 'zhihu.com': '知乎', 'bilibili.com': 'B站', 'douyin.com': '抖音', 'wechat.com': '公众号', 'mp.weixin.qq.com': '公众号' };
+      label = map[host] || host || '链接';
+      const author = String(text || '').match(/(?:作者|博主|up主|UP主)[：:]\s*([^\n，。]{1,18})/);
+      if (author) label += ' · @' + author[1].trim();
+    }
+    return { label, url: u };
+  }
+
+  function cleanTitleLine(line) {
+    return String(line || '')
+      .replace(/https?:\/\/\S+/g, '')
+      .replace(/#[^#\s，。！？、,.!?]{1,16}/g, '')
+      .replace(/^(标题|题目)[：:]\s*/, '')
+      .replace(/^[\d\s.、,，:：\-—]+/, '')
+      .trim();
+  }
+
+  function splitSentences(text) {
+    return String(text || '')
+      .replace(/\r/g, '')
+      .replace(/\n{2,}/g, '。\n')
+      .split(/[。！？!?；;]+|\n+/)
+      .map((s) => s.replace(/^[\s\d.、,，:：\-—]+/, '').trim())
+      .filter((s) => s.length >= 6 && s.length <= 160);
+  }
+
+  function keywordScores(text) {
+    const scores = [];
+    CATEGORY_DEFS.forEach((cat) => {
+      let score = 0;
+      cat.keywords.forEach((kw) => {
+        if (!kw) return;
+        const re = new RegExp(escapeRegExp(kw), 'gi');
+        const m = String(text).match(re);
+        if (m) score += m.length * (kw.length >= 3 ? 2 : 1);
+      });
+      scores.push({ cat, score });
+    });
+    return scores.sort((a, b) => b.score - a.score);
+  }
+
+  function topTags(text, category, limit) {
+    const limitN = limit || 4;
+    const tags = hashtagsOf(text);
+    const textLower = String(text).toLowerCase();
+    const scores = {};
+    CATEGORY_DEFS.forEach((cat) => cat.keywords.forEach((kw) => {
+      if (!kw) return;
+      const idx = textLower.indexOf(String(kw).toLowerCase());
+      if (idx >= 0) scores[kw] = (scores[kw] || 0) + (kw.length >= 3 ? 2 : 1);
+    }));
+    Object.keys(scores).sort((a, b) => scores[b] - scores[a]).forEach((kw) => {
+      if (tags.indexOf(kw) < 0) tags.push(kw);
+    });
+    if (category && category.name && tags.length === 0) tags.push(category.name);
+    return tags.slice(0, limitN);
+  }
+
+  function chooseTopic(text, category, tags) {
+    const topicList = (category && category.topics) || [];
+    const lower = String(text).toLowerCase();
+    for (const t of topicList) {
+      if (lower.indexOf(String(t).toLowerCase()) >= 0) return t;
+    }
+    for (const t of tags) {
+      for (const topic of topicList) {
+        if (t.indexOf(topic) >= 0 || topic.indexOf(t) >= 0) return topic;
+      }
+    }
+    return tags[0] || '综合笔记';
+  }
+
+  function bigrams(s) {
+    const clean = String(s || '').replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '');
+    const out = new Set();
+    for (let i = 0; i < clean.length - 1; i++) out.add(clean.slice(i, i + 2));
+    return out;
+  }
+
+  function jaccard(a, b) {
+    if (!a.size || !b.size) return 0;
+    let inter = 0;
+    a.forEach((x) => { if (b.has(x)) inter++; });
+    return inter / (a.size + b.size - inter);
+  }
+
+  function cardTokens(card) {
+    const set = new Set();
+    (card.tags || []).forEach((t) => set.add(String(t).toLowerCase()));
+    bigrams(card.title).forEach((x) => set.add(x));
+    bigrams((card.summary || '').slice(0, 80)).forEach((x) => set.add(x));
+    return set;
+  }
+
+  function cardSimilarity(a, b) {
+    const tagJ = jaccard(new Set((a.tags || []).map((t) => String(t).toLowerCase())), new Set((b.tags || []).map((t) => String(t).toLowerCase())));
+    const titleJ = jaccard(bigrams(a.title), bigrams(b.title));
+    const sumJ = jaccard(bigrams((a.summary || '').slice(0, 90)), bigrams((b.summary || '').slice(0, 90)));
+    let score = 0.5 * tagJ + 0.3 * titleJ + 0.2 * sumJ;
+    if (a.topic && a.topic === b.topic) score += 0.3;
+    if (a.category && a.category === b.category) score += 0.05;
+    return Math.min(1, score);
+  }
+
+  /* ---------------------------------------------------------------- 数据 */
+  let data = null;
+  let aiLive = false;
+  let serverLive = false;
+  let inboxItems = [];
+  let inboxTimer = null;
+  let linkResolving = false;
+
+  function normalizeCard(c) {
+    return {
+      id: c.id || uid('card'),
+      title: c.title || '未命名卡片',
+      summary: c.summary || '',
+      points: Array.isArray(c.points) ? c.points.filter(Boolean) : [],
+      tags: Array.isArray(c.tags) ? c.tags.filter(Boolean) : [],
+      category: c.category || '未分类',
+      topic: c.topic || '综合笔记',
+      quote: c.quote || '',
+      sourceLabel: c.sourceLabel || '手动粘贴',
+      url: safeUrl(c.url),
+      createdAt: c.createdAt || new Date().toISOString(),
+      demo: Boolean(c.demo)
+    };
+  }
+
+  function seedData() {
+    return {
+      version: 1,
+      demo: true,
+      cards: DEMO_CARDS.map((c, i) => normalizeCard({ ...c, id: 'demo_' + i, demo: true })),
+      settings: { threshold: 0.45, merge: true },
+      createdAt: new Date().toISOString()
+    };
+  }
+
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY) || localStorage.getItem(LEGACY_STORE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.cards)) {
+          parsed.cards = parsed.cards.map(normalizeCard);
+          parsed.settings = { threshold: 0.45, merge: true, ...(parsed.settings || {}) };
+          // 从旧品牌迁移：读取一次后写入新 key
+          if (!localStorage.getItem(STORE_KEY)) {
+            try { localStorage.setItem(STORE_KEY, JSON.stringify(parsed)); } catch (e) { /* 忽略 */ }
+          }
+          return parsed;
+        }
+      }
+    } catch (e) { /* 忽略损坏数据 */ }
+    return seedData();
+  }
+
+  function saveData() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) { /* 隐私模式忽略 */ }
+  }
+
+  function refreshDemoFlag() {
+    data.demo = data.cards.some((c) => c.demo);
+  }
+
+  /* ---------------------------------------------------------------- 视图状态 */
+  const state = {
+    view: 'collect',
+    busy: false,
+    analysis: null,
+    progress: 0,
+    filter: { category: '', topic: '', q: '', sort: 'new' },
+    openCats: new Set(),
+    map: {
+      category: '',
+      topic: '',
+      threshold: 0.45,
+      merge: true,
+      selected: null,
+      collapsed: new Set(),
+      zoom: 1,
+      panX: 0,
+      panY: 0
+    },
+    lastSavedId: ''
+  };
+
+  /* ---------------------------------------------------------------- 图标 */
+  function icon(name, size) {
+    const s = size || 18;
+    const paths = {
+      spark: '<path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3z"/><path d="M19 15l.9 2.6L22.5 18l-2.6.9L19 21l-.9-2.1L15.5 18l2.6-.4L19 15z"/>',
+      arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+      folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>',
+      cards: '<rect x="3" y="6" width="12" height="15" rx="2"/><path d="M8 3h9a2 2 0 0 1 2 2v11"/>',
+      map: '<circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="18" cy="18" r="2.3"/><path d="M8.3 11l7.4-4M8.3 13l7.4 4"/>',
+      search: '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
+      close: '<path d="M6 6l12 12M18 6L6 18"/>',
+      download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+      upload: '<path d="M12 21V9M7 14l5-5 5 5M4 3h16"/>',
+      trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/>',
+      external: '<path d="M14 4h6v6M20 4l-9 9M18 13v6H5V6h6"/>',
+      plus: '<path d="M12 5v14M5 12h14"/>',
+      refresh: '<path d="M20 11a8 8 0 1 0-2.3 6.7M20 5v6h-6"/>',
+      info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+      check: '<path d="M4 12l5 5L20 6"/>',
+      chevron: '<path d="M9 6l6 6-6 6"/>',
+      folderOpen: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2H3V7z"/><path d="M3 11h18l-2 8H5l-2-8z"/>',
+      inbox: '<path d="M4 5h16v13H4z"/><path d="M4 13h4l2 3h4l2-3h4"/>',
+      link: '<path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/>',
+      sparkle: '<path d="M12 2l2.2 6.8L21 11l-6.8 2.2L12 20l-2.2-6.8L3 11l6.8-2.2L12 2z"/>'
+    };
+    return `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || ''}</svg>`;
+  }
+
+  /* ---------------------------------------------------------------- toast / modal */
+  function toast(msg, type) {
+    const wrap = document.getElementById('toast-wrap');
+    const el = document.createElement('div');
+    el.className = 'toast' + (type === 'error' ? ' is-error' : '');
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(6px)'; }, 2600);
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 3000);
+  }
+
+  function openModal(html) {
+    const root = document.getElementById('modal-root');
+    root.hidden = false;
+    root.innerHTML = `<div class="modal-backdrop" data-action="close-modal"></div><div class="modal" role="dialog" aria-modal="true">${html}</div>`;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    const root = document.getElementById('modal-root');
+    root.hidden = true;
+    root.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  function modalShell(title, meta, body, actions) {
+    return `
+      <div class="modal-head">
+        <div><h2>${esc(title)}</h2><div class="modal-meta">${meta || ''}</div></div>
+        <button class="modal-close" type="button" data-action="close-modal" aria-label="关闭">${icon('close', 16)}</button>
+      </div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-actions">${actions || `<button class="btn btn-ghost" type="button" data-action="close-modal">关闭</button>`}</div>`;
+  }
+
+  /* ---------------------------------------------------------------- 分析：本地规则 */
+  function localAnalyze(textInput, urlInput) {
+    const text = String(textInput || '').replace(/\r/g, '').trim();
+    const url = safeUrl(urlInput || extractUrl(text));
+    const sentences = splitSentences(text);
+    const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+    const firstLine = cleanTitleLine(lines[0] || '');
+    const scores = keywordScores(text);
+    const best = scores[0];
+    const strong = best && best.score >= 2;
+    const category = strong ? best.cat : (best && best.score === 1 ? best.cat : null);
+    const tags = topTags(text, category, 4);
+    const cat = category || { name: tags[0] ? '新知识 · ' + tags[0] : '未分类', topics: [] };
+    const dynamicCat = category ? category : categoryInfo(cat.name);
+    const topic = chooseTopic(text, dynamicCat, tags);
+    const titleCandidate = firstLine || (sentences[0] ? truncate(sentences[0], 26) : '一条新的知识卡片');
+    const title = truncate(titleCandidate.replace(/^["'“”]+|["'“”]+$/g, ''), 30);
+    const summarySentences = [];
+    if (sentences[0]) summarySentences.push(sentences[0]);
+    const ranked = sentences.slice(1).map((s, i) => {
+      let sc = i === 0 ? 1 : 0;
+      scores.forEach((entry) => entry.cat.keywords.forEach((kw) => { if (s.indexOf(kw) >= 0) sc += 2; }));
+      return { s, sc };
+    }).sort((a, b) => b.sc - a.sc);
+    if (ranked[0]) summarySentences.push(ranked[0].s);
+    const summary = truncate(summarySentences.join(' ').replace(/\s+/g, ' '), 120);
+    const pointRanked = ranked
+      .filter((x) => x.sc > 0 && x.s !== summarySentences[0])
+      .slice(0, 6)
+      .map((x) => truncate(x.s, 62));
+    let points = [];
+    pointRanked.forEach((p) => { if (points.indexOf(p) < 0) points.push(p); });
+    if (points.length < 3) {
+      sentences.forEach((s) => { if (points.length < 3 && points.indexOf(truncate(s, 62)) < 0 && s !== summarySentences[0]) points.push(truncate(s, 62)); });
+    }
+    const quote = sentences.find((s) => /建议|记住|最重要|其实|不要|必须|核心/.test(s)) || sentences[0] || '';
+    const source = sourceFromUrl(url, text);
+
+    return Promise.resolve(normalizeCard({
+      title, summary: summary || truncate(text, 110), points: points.slice(0, 4),
+      tags: tags.length ? tags : [topic],
+      category: cat.name, topic,
+      quote: truncate(quote, 90), sourceLabel: source.label, url: source.url,
+      createdAt: new Date().toISOString()
+    }));
+  }
+
+  /* ---------------------------------------------------------------- 分析：服务端真 AI（可选） */
+  async function serverAnalyze(text, url) {
+    const res = await fetch('/api/analyze', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, url })
+    });
+    if (!res.ok) throw new Error('AI 服务返回 ' + res.status);
+    const payload = await res.json();
+    const raw = payload.card || (payload.cards && payload.cards[0]);
+    if (!raw) throw new Error('AI 没有返回卡片');
+    const source = sourceFromUrl(url || extractUrl(text), text);
+    return normalizeCard({
+      ...raw,
+      points: Array.isArray(raw.points) ? raw.points : [],
+      tags: Array.isArray(raw.tags) ? raw.tags : [],
+      sourceLabel: raw.sourceLabel || source.label,
+      url: raw.url || source.url,
+      createdAt: new Date().toISOString()
+    });
+  }
+
+  async function analyze(text, url) {
+    if (aiLive) {
+      try { return await serverAnalyze(text, url); }
+      catch (e) { toast('AI 服务暂时不可用，已改用本地演示解析', 'error'); }
+    }
+    return localAnalyze(text, url);
+  }
+
+  async function detectAI() {
+    try {
+      const res = await fetch('/api/health', { cache: 'no-store' });
+      if (!res.ok) return;
+      const j = await res.json();
+      if (j && j.ok) {
+        serverLive = true;
+        const badge = document.getElementById('ai-badge');
+        if (j.mode === 'spark') {
+          aiLive = true;
+          badge.classList.add('is-live');
+          document.getElementById('ai-badge-text').textContent = 'AI 已连接';
+        } else {
+          document.getElementById('ai-badge-text').textContent = '本地演示';
+        }
+        startInboxPolling();
+      }
+    } catch (e) { /* 静态打开：本地演示 */ }
+  }
+
+  /* ---------------------------------------------------------------- 分享链接 / 收件箱 */
+  function setLinkStatus(text, kind) {
+    const el = document.getElementById('link-status');
+    if (!el) return;
+    el.hidden = !text;
+    el.textContent = text || '';
+    el.className = 'link-status' + (kind ? ' is-' + kind : '');
+  }
+
+  function fillEditor(text, url) {
+    const ta = document.getElementById('paste-text');
+    const urlEl = document.getElementById('paste-url');
+    if (urlEl && url) urlEl.value = url;
+    if (ta && text) {
+      ta.value = text;
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    updateCharCount();
+  }
+
+  async function resolveLink(url, opts) {
+    const options = opts || {};
+    if (!serverLive) {
+      toast('本地演示不能读取链接；请直接粘贴笔记文字，链接会作为来源保存', 'error');
+      return null;
+    }
+    if (linkResolving) return null;
+    if (!/^https?:\/\//i.test(url || '')) {
+      toast('先填一个 http/https 链接', 'error');
+      return null;
+    }
+    linkResolving = true;
+    setLinkStatus('正在读取链接…', 'loading');
+    const btn = document.querySelector('[data-action="resolve-link"]');
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetch('/api/resolve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const j = await res.json();
+      if (!res.ok || !j.ok) throw new Error(j.error || '读取失败');
+      let text = j.text || j.description || '';
+      // 登录墙页面常把“小红书 - 你的生活兴趣社区”当正文，这种短标题不要当内容
+      if (j.blocked && text.length < 60) text = '';
+      if (j.blocked && !text) {
+        const ta = document.getElementById('paste-text');
+        if (ta) { ta.value = ''; updateCharCount(); }
+      }
+      fillEditor(text, url);
+      if (j.blocked) {
+        setLinkStatus(j.note || '平台限制，未能读取正文；请手动粘贴文字（链接已保留）', 'warn');
+        toast(j.note || '平台限制，未能读取正文', 'error');
+      } else {
+        setLinkStatus(`已读取：${j.title || j.site || '网页'}${text ? '（正文已填入，可编辑）' : ''}`, 'ok');
+        toast('链接已读取，确认文字后点「理成知识卡片」');
+      }
+      if (options.autoAnalyze) {
+        const ta = document.getElementById('paste-text');
+        if (ta && ta.value.trim().length >= 12) runAnalyze();
+      }
+      return j;
+    } catch (e) {
+      setLinkStatus(e.message || '读取失败，请手动粘贴', 'warn');
+      toast(e.message || '读取失败，请手动粘贴', 'error');
+      return null;
+    } finally {
+      linkResolving = false;
+      const b = document.querySelector('[data-action="resolve-link"]');
+      if (b) b.disabled = false;
+    }
+  }
+
+  async function loadInbox() {
+    if (!serverLive) return;
+    try {
+      const res = await fetch('/api/inbox', { cache: 'no-store' });
+      if (!res.ok) return;
+      const j = await res.json();
+      if (j && j.ok && Array.isArray(j.items)) {
+        inboxItems = j.items;
+        updateInboxBadge();
+        renderInboxPanel();
+      }
+    } catch (e) { /* 忽略 */ }
+  }
+
+  function startInboxPolling() {
+    loadInbox();
+    if (inboxTimer) clearInterval(inboxTimer);
+    inboxTimer = setInterval(loadInbox, 8000);
+  }
+
+  function updateInboxBadge() {
+    const badge = document.getElementById('inbox-badge');
+    if (!badge) return;
+    const n = inboxItems.length;
+    badge.hidden = n === 0;
+    badge.textContent = n > 9 ? '9+' : String(n);
+  }
+
+  function renderInboxPanel() {
+    const host = document.getElementById('inbox-panel');
+    if (!host) return;
+    if (!serverLive || !inboxItems.length) {
+      host.hidden = true;
+      host.innerHTML = '';
+      return;
+    }
+    host.hidden = false;
+    host.innerHTML = `
+      <div class="inbox-head">
+        <div>${icon('inbox', 15)} <b>来自分享的链接</b><span>${inboxItems.length} 条待归档</span></div>
+        <button class="btn btn-small btn-ghost" type="button" data-action="refresh-inbox">刷新</button>
+      </div>
+      <div class="inbox-list">
+        ${inboxItems.map((it) => `
+          <div class="inbox-item">
+            <div class="inbox-item-main">
+              <div class="inbox-item-title">${esc(it.title || it.url)}</div>
+              <div class="inbox-item-meta">${esc(it.from || '分享')} · ${esc((it.createdAt || '').replace('T', ' ').slice(0, 16))}</div>
+            </div>
+            <div class="inbox-item-actions">
+              <button class="btn btn-small btn-primary" type="button" data-action="use-inbox" data-id="${esc(it.id)}">读取并归档</button>
+              <button class="btn btn-small btn-ghost" type="button" data-action="drop-inbox" data-id="${esc(it.id)}">忽略</button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  async function useInboxItem(id) {
+    const item = inboxItems.find((x) => x.id === id);
+    if (!item) return;
+    const ta = document.getElementById('paste-text');
+    const urlEl = document.getElementById('paste-url');
+    // 浏览器插件/QQ 如果已经带来正文，直接填，不再抓登录墙
+    if (item.text && String(item.text).trim().length >= 12) {
+      fillEditor(String(item.text), item.url);
+      setLinkStatus(`已接收：${item.title || '分享正文'}（正文已填入，可编辑后提炼）`, 'ok');
+      await removeInboxItem(id);
+      toast('正文已填入，点「理成知识卡片」即可');
+      if (ta) ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (ta) ta.value = item.text || '';
+    if (urlEl) urlEl.value = item.url;
+    updateCharCount();
+    const result = await resolveLink(item.url, { autoAnalyze: !!(item.text && item.text.length >= 12) });
+    if (result !== null || !serverLive) await removeInboxItem(id);
+    const urlInput = document.getElementById('paste-url');
+    if (urlInput) urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  async function removeInboxItem(id) {
+    try {
+      await fetch('/api/inbox?id=' + encodeURIComponent(id), { method: 'DELETE' });
+    } catch (e) { /* 忽略 */ }
+    inboxItems = inboxItems.filter((x) => x.id !== id);
+    updateInboxBadge();
+    renderInboxPanel();
+  }
+
+  async function handleSharedParams() {
+    const params = new URLSearchParams(location.search);
+    const sharedText = params.get('text') || '';
+    let sharedUrl = params.get('url') || params.get('link') || params.get('share') || '';
+    if (!sharedUrl && sharedText) {
+      const m = sharedText.match(/https?:\/\/[^\s<>"']+/);
+      if (m) sharedUrl = m[0].replace(/[，。！？、,.!?)）】]+$/, '');
+    }
+    if (!sharedUrl && !sharedText) return;
+    if (state.view !== 'collect') {
+      state.view = 'collect';
+      renderCollect();
+    }
+    const ta = document.getElementById('paste-text');
+    const urlEl = document.getElementById('paste-url');
+    if (sharedText) {
+      if (ta) ta.value = sharedText.replace(sharedUrl, '').trim() || sharedText;
+      updateCharCount();
+    }
+    if (urlEl && sharedUrl) urlEl.value = sharedUrl;
+    if (sharedUrl && !sharedText) {
+      toast('收到分享链接，正在读取…');
+      await resolveLink(sharedUrl, { autoAnalyze: params.get('auto') === '1' });
+    } else if (params.get('auto') === '1' && ta && ta.value.trim().length >= 12) {
+      runAnalyze();
+    }
+  }
+
+
+  function renderCollect() {
+    const letters = document.querySelectorAll('.tab');
+    letters.forEach((t) => t.classList.toggle('is-active', t.dataset.nav === 'collect'));
+    const demoBanner = data.demo ? `
+      <div class="demo-banner">
+        <span>${icon('sparkle', 15)} 已放入 <b>8 张示例卡片</b>，可直接体验；也可以清空后从自己的笔记开始。</span>
+        <div><button class="btn btn-small btn-ghost" type="button" data-action="clear-demo">清空示例</button></div>
+      </div>` : '';
+
+    document.getElementById('main').innerHTML = `
+      <section class="view collect">
+        ${demoBanner}
+        <div id="inbox-panel" class="inbox-panel" hidden></div>
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">01 / 收集 · 从刷到到留下</p>
+            <h1>把刷到的<em>好内容</em>，<br>理成自己的知识。</h1>
+            <p class="lede">在小红书看到经验贴、知识讲解，复制文字和链接，粘进来。知序会帮你提炼成一张带来源的知识卡片，并自动放进你的知识谱系。</p>
+            <div class="hero-steps">
+              <span class="step"><b>1</b> 复制笔记</span><span class="arrow">→</span>
+              <span class="step"><b>2</b> AI 提炼</span><span class="arrow">→</span>
+              <span class="step"><b>3</b> 自动归档</span>
+            </div>
+          </div>
+          <div class="jar-stage" aria-hidden="true">
+            <div class="jar-glow"></div>
+            <span class="jar-tag t1"># 早C晚A</span>
+            <span class="jar-tag t2"># 时间管理</span>
+            <span class="jar-tag t3"># 面试表达</span>
+            <span class="jar-tag t4"># 存钱方法</span>
+            <div class="jar-big">
+              <div class="jar-seal">知</div>
+              <div class="jar-label">KNOWLEDGE ORDER</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="collect-grid">
+          <div class="panel input-panel">
+            <div class="panel-head">
+              <div class="panel-title">${icon('spark', 15)}<span>新建知识卡片</span></div>
+              <span class="mode-chip">粘贴文本</span>
+            </div>
+            <textarea id="paste-text" class="paste-area" placeholder="把小红书笔记的文字粘贴到这里……&#10;比如：早C晚A真的适合所有人吗？作为一个敏感肌，我想说……">${esc(state.analysis ? state.analysis.rawText : '')}</textarea>
+            <div class="input-foot">
+              <input id="paste-url" class="url-input" type="url" placeholder="帖子链接（可选，用于记录来源）" value="${esc(state.analysis ? state.analysis.rawUrl : '')}" />
+              <button class="btn btn-small btn-ghost url-read-btn" type="button" data-action="resolve-link">${icon('link', 13)} 读取链接</button>
+              <span class="char-count" id="char-count">0 字</span>
+            </div>
+            <div class="link-status" id="link-status" hidden></div>
+            <div class="share-hint">${icon('inbox', 12)} 在手机/QQ 里分享给知序，或在链接后加 <code>?url=</code>，都会进入同一个收集框。</div>
+            <div class="input-actions">
+              <button class="btn btn-ghost btn-small" type="button" data-action="fill-sample">放入示例笔记</button>
+              <button class="btn btn-primary" type="button" data-action="analyze" id="btn-analyze">
+                ${icon('sparkle', 15)} 理成知识卡片 ${icon('arrow', 15)}
+              </button>
+            </div>
+            <div class="analysis-progress" id="progress" hidden>
+              <div class="p-title"><span>正在提炼这张卡片…</span><span id="progress-label">读取文本</span></div>
+              <div class="p-steps">
+                <div class="p-step" data-step="0"><span class="p-dot"></span><span>读取原文，识别主题与来源</span></div>
+                <div class="p-step" data-step="1"><span class="p-dot"></span><span>提炼卡片：标题 / 摘要 / 要点 / 标签</span></div>
+                <div class="p-step" data-step="2"><span class="p-dot"></span><span>匹配现有知识谱系，准备归档</span></div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="panel tips-panel">
+            <h3>一张好卡片，长什么样？</h3>
+            <p>知序不保存整篇笔记，只留下「以后还会用到」的部分。</p>
+            <ul class="tip-list">
+              <li><span class="ti">壹</span><span><b>一句话结论</b><br>先说你最想记住的判断。</span></li>
+              <li><span class="ti">贰</span><span><b>3–4 个要点</b><br>方法、步骤、避坑，各留一条。</span></li>
+              <li><span class="ti">叁</span><span><b>来源不丢</b><br>记录博主 / 链接，方便回原帖对照。</span></li>
+            </ul>
+            <div class="sample-box">${icon('info', 13)} 第一次用？点左下角「放入示例笔记」，直接看一遍完整流程。</div>
+          </aside>
+        </div>
+
+        <div id="result-area">${state.analysis ? renderAnalysisResult() : ''}</div>
+      </section>`;
+
+    updateCharCount();
+    renderInboxPanel();
+    updateInboxBadge();
+  }
+
+  function renderAnalysisResult() {
+    const card = state.analysis.card;
+    const categories = allCategoryNames();
+    if (categories.indexOf(card.category) < 0) categories.unshift(card.category);
+    const catOptions = categories.map((name) => `<option value="${esc(name)}" ${name === card.category ? 'selected' : ''}>${esc(name)}</option>`).join('');
+    return `
+      <div class="result-wrap">
+        <div class="result-head">
+          <h2>卡片已提炼好，确认一下？</h2>
+          <span class="hint">可修改后保存到知识库</span>
+        </div>
+        <div class="panel result-card">
+          <div class="result-main">
+            <div class="field"><label>标题</label><input id="edit-title" value="${esc(card.title)}" maxlength="40" /></div>
+            <div class="field"><label>一句话摘要</label><textarea id="edit-summary" maxlength="160">${esc(card.summary)}</textarea></div>
+            <div class="field-row">
+              <div class="field"><label>分类（大点）</label><select id="edit-category">${catOptions}<option value="__new__">＋ 新建分类…</option></select></div>
+              <div class="field"><label>主题（小点）</label><input id="edit-topic" value="${esc(card.topic)}" maxlength="20" /></div>
+            </div>
+            <div class="field" id="new-cat-field" hidden><label>新分类名称</label><input id="edit-new-cat" placeholder="比如：露营 / 养猫" maxlength="20" /></div>
+            <div class="field"><label>要点（每行一条）</label><textarea id="edit-points">${esc(card.points.join('\n'))}</textarea></div>
+            <div class="field"><label>标签（逗号分隔）</label><input id="edit-tags" value="${esc(card.tags.join('，'))}" /></div>
+            <div class="field"><label>原帖里最值得保留的一句</label><input id="edit-quote" value="${esc(card.quote)}" /></div>
+          </div>
+          <div class="result-side">
+            <div class="meta-block"><b>来源</b><input id="edit-source" class="field-input" value="${esc(card.sourceLabel)}" /></div>
+            <div class="meta-block"><b>链接</b><input id="edit-url" class="field-input" value="${esc(card.url)}" placeholder="https://…" /></div>
+            <div class="meta-block"><b>归档位置</b><div class="value" id="archive-preview">${esc(card.category)} › ${esc(card.topic)}</div></div>
+            <div class="result-actions">
+              <button class="btn btn-primary" type="button" data-action="save-card">${icon('check', 15)} 保存到知识库</button>
+              <button class="btn btn-ghost btn-small" type="button" data-action="reanalyze">${icon('refresh', 14)} 重新解析</button>
+              <button class="btn btn-link" type="button" data-action="discard-result">先不保存</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function updateCharCount() {
+    const ta = document.getElementById('paste-text');
+    const cc = document.getElementById('char-count');
+    if (!ta || !cc) return;
+    cc.textContent = `${ta.value.trim().length} 字`;
+  }
+
+  /* ---------------------------------------------------------------- 收集事件 */
+  function setProgressStep(index) {
+    document.querySelectorAll('.p-step').forEach((el, i) => {
+      el.classList.toggle('is-done', i < index);
+      el.classList.toggle('is-active', i === index);
+    });
+    const labels = ['读取文本', '提炼卡片', '匹配谱系'];
+    const lab = document.getElementById('progress-label');
+    if (lab) lab.textContent = labels[Math.min(index, labels.length - 1)];
+  }
+
+  async function runAnalyze() {
+    if (state.busy) return;
+    const ta = document.getElementById('paste-text');
+    const urlEl = document.getElementById('paste-url');
+    const text = ta ? ta.value.trim() : '';
+    if (text.length < 12) { toast('先粘贴一段笔记文字（至少 12 个字）', 'error'); if (ta) ta.focus(); return; }
+    state.busy = true;
+    const btn = document.getElementById('btn-analyze');
+    if (btn) btn.disabled = true;
+    const progress = document.getElementById('progress');
+    if (progress) progress.hidden = false;
+    setProgressStep(0);
+    state.analysis = { rawText: text, rawUrl: urlEl ? urlEl.value.trim() : '' };
+    try {
+      await delay(420);
+      setProgressStep(1);
+      const card = await analyze(text, urlEl ? urlEl.value.trim() : '');
+      await delay(420);
+      setProgressStep(2);
+      await delay(360);
+      state.analysis = { rawText: text, rawUrl: urlEl ? urlEl.value.trim() : '', card };
+      setProgressStep(3);
+      renderCollect();
+      const result = document.getElementById('result-area');
+      if (result) result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast('卡片已生成，确认后保存');
+    } catch (e) {
+      toast(e.message || '解析失败，请重试', 'error');
+    } finally {
+      state.busy = false;
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function saveCardFromForm() {
+    if (!state.analysis || !state.analysis.card) return;
+    const base = state.analysis.card;
+    const title = document.getElementById('edit-title').value.trim();
+    const summary = document.getElementById('edit-summary').value.trim();
+    const categorySel = document.getElementById('edit-category');
+    let category = categorySel.value;
+    if (category === '__new__') {
+      const input = document.getElementById('edit-new-cat');
+      category = input && input.value.trim() ? input.value.trim() : '未分类';
+    }
+    const topic = document.getElementById('edit-topic').value.trim() || '综合笔记';
+    const points = document.getElementById('edit-points').value.split('\n').map((s) => s.trim()).filter(Boolean);
+    const tags = document.getElementById('edit-tags').value.split(/[，,、\s]+/).map((s) => s.trim()).filter(Boolean);
+    const quote = document.getElementById('edit-quote').value.trim();
+    const sourceLabel = document.getElementById('edit-source').value.trim() || '手动粘贴';
+    const url = safeUrl(document.getElementById('edit-url').value.trim());
+    if (!title) { toast('标题不能为空', 'error'); return; }
+    const card = normalizeCard({
+      ...base, title, summary, category, topic, points, tags, quote,
+      sourceLabel, url, createdAt: new Date().toISOString(), demo: false
+    });
+    data.cards.unshift(card);
+    refreshDemoFlag();
+    saveData();
+    state.analysis = null;
+    state.lastSavedId = card.id;
+    state.filter.category = '';
+    state.filter.topic = '';
+    state.filter.q = '';
+    state.openCats.add(category);
+    toast('已保存到知识库');
+    setView('library');
+  }
+
+  /* ---------------------------------------------------------------- 知识库 */
+  function filteredCards() {
+    const f = state.filter;
+    const q = f.q.trim().toLowerCase();
+    return data.cards.filter((c) => {
+      if (f.category && c.category !== f.category) return false;
+      if (f.topic && c.topic !== f.topic) return false;
+      if (q) {
+        const hay = [c.title, c.summary, c.points.join(' '), c.tags.join(' '), c.category, c.topic, c.sourceLabel].join(' ').toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort((a, b) => {
+      if (f.sort === 'old') return new Date(a.createdAt) - new Date(b.createdAt);
+      if (f.sort === 'title') return String(a.title).localeCompare(String(b.title), 'zh');
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+  }
+
+  function buildTree() {
+    const map = new Map();
+    data.cards.forEach((c) => {
+      if (!map.has(c.category)) map.set(c.category, new Map());
+      const topics = map.get(c.category);
+      if (!topics.has(c.topic)) topics.set(c.topic, []);
+      topics.get(c.topic).push(c);
+    });
+    return map;
+  }
+
+  function renderLibrary() {
+    document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.nav === 'library'));
+    const tree = buildTree();
+    const f = state.filter;
+    const cards = filteredCards();
+    const activeCat = f.category;
+    const activeTopic = f.topic;
+
+    let treeHtml = `<button class="tree-all ${!activeCat && !activeTopic ? 'is-active' : ''}" type="button" data-cat="" data-topic="">${icon('cards', 14)}<span>全部卡片</span><span class="count">${data.cards.length}</span></button>`;
+    Array.from(tree.keys()).sort((a, b) => (tree.get(b).size - tree.get(a).size)).forEach((cat) => {
+      const topics = tree.get(cat);
+      const catCount = Array.from(topics.values()).reduce((n, arr) => n + arr.length, 0);
+      const info = categoryInfo(cat);
+      const open = state.openCats.has(cat) || activeCat === cat;
+      treeHtml += `<div class="tree-cat ${open ? 'is-open' : ''}" data-cat-wrap="${esc(cat)}">
+        <button class="tree-cat-head ${activeCat === cat && !activeTopic ? 'is-active' : ''}" type="button" data-cat="${esc(cat)}" data-topic="">
+          <span class="cat-dot" style="background:${info.color}"></span>
+          <span class="cat-name">${esc(cat)}</span><span class="count">${catCount}</span>
+          <span class="chev">${icon('chevron', 12)}</span>
+        </button>
+        <div class="tree-topics">
+          <div class="tree-cards">
+            ${Array.from(topics.keys()).map((topic) => `<button class="tree-topic-head ${activeTopic === topic ? 'is-active' : ''}" type="button" data-cat="${esc(cat)}" data-topic="${esc(topic)}"><span>${esc(topic)}</span><span class="t-count">${topics.get(topic).length}</span></button>
+            ${topics.get(topic).slice(0, 6).map((c) => `<button class="tree-card-btn" type="button" data-card="${esc(c.id)}"><span>${esc(c.title)}</span></button>`).join('')}`).join('')}
+          </div>
+        </div>
+      </div>`;
+    });
+    if (!data.cards.length) treeHtml = `<div class="empty-state" style="padding:26px 14px"><p>还没有卡片</p></div>`;
+
+    const headTitle = activeTopic || activeCat || '全部卡片';
+    const headDesc = activeTopic ? `主题「${activeTopic}」下的卡片` : activeCat ? `分类「${activeCat}」下的全部卡片` : '你收集的所有知识卡片，按主题自动归档';
+    const cardsHtml = cards.length ? `<div class="card-grid">${cards.map(renderCard).join('')}</div>` : `
+      <div class="empty-state">
+        <div class="empty-icon">${icon('cards', 24)}</div>
+        <h3>${data.cards.length ? '这里还没有卡片' : '知识库还是空的'}</h3>
+        <p>${data.cards.length ? '换个筛选，或者回到收集页再理一张。' : '去收集页粘贴一篇笔记，知序会帮你理出第一张卡片。'}</p>
+        <button class="btn btn-primary" type="button" data-action="go-collect">${icon('plus', 15)} 去收集</button>
+      </div>`;
+
+    document.getElementById('main').innerHTML = `
+      <section class="view library">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">02 / 知识库 · 你的谱系</p>
+            <h1>知识库</h1>
+            <p class="lede">一张卡片是一个小点，一个主题是一根枝，一个分类是一个大点。新卡片会先尝试并入原来的谱系，放不进去时，才长出一个新的大点。</p>
+          </div>
+          <div class="stats-row">
+            <span class="stat-chip"><b>${data.cards.length}</b>卡片</span>
+            <span class="stat-chip"><b>${tree.size}</b>分类</span>
+            <span class="stat-chip"><b>${new Set(data.cards.map((c) => c.category + '|' + c.topic)).size}</b>主题</span>
+            <span class="stat-chip"><b>${new Set(data.cards.map((c) => c.sourceLabel)).size}</b>来源</span>
+          </div>
+        </div>
+        ${data.demo ? `<div class="demo-banner"><span>${icon('sparkle', 15)} 当前是示例数据，方便你先逛一圈；开始记录自己的内容时，可随时清空。</span><div><button class="btn btn-small btn-ghost" type="button" data-action="clear-demo">清空示例</button></div></div>` : ''}
+        <div class="library-grid">
+          <aside class="panel tree-panel">
+            <div class="tree-title"><span>知识谱系</span><span>${tree.size} 个分类</span></div>
+            ${treeHtml}
+          </aside>
+          <div class="cards-panel">
+            <div class="list-toolbar">
+              <div class="search-box">${icon('search', 15)}<input id="search-input" type="search" placeholder="搜索标题、要点、标签、来源…" value="${esc(state.filter.q)}" /></div>
+              <select class="select" id="sort-select" aria-label="排序">
+                <option value="new" ${f.sort === 'new' ? 'selected' : ''}>最近添加</option>
+                <option value="old" ${f.sort === 'old' ? 'selected' : ''}>最早添加</option>
+                <option value="title" ${f.sort === 'title' ? 'selected' : ''}>按标题</option>
+              </select>
+              <span class="result-count">${cards.length} 张</span>
+            </div>
+            <div class="list-subhead" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 12px">
+              <div><b style="font-family:var(--font-serif);font-size:17px">${esc(headTitle)}</b><span style="font-size:11px;color:var(--muted);margin-left:8px">${esc(headDesc)}</span></div>
+              <div style="display:flex;gap:6px">
+                <button class="icon-btn" type="button" title="导出知识库 JSON" data-action="export-data">${icon('download', 15)}</button>
+                <button class="icon-btn" type="button" title="导入知识库 JSON" data-action="import-data">${icon('upload', 15)}</button>
+              </div>
+            </div>
+            ${cardsHtml}
+          </div>
+        </div>
+      </section>`;
+
+    const search = document.getElementById('search-input');
+    if (search) {
+      let timer = null;
+      search.addEventListener('input', function () {
+        state.filter.q = this.value;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          renderLibrary();
+          const next = document.getElementById('search-input');
+          if (next) { next.focus(); next.setSelectionRange(next.value.length, next.value.length); }
+        }, 200);
+      });
+    }
+    const sort = document.getElementById('sort-select');
+    if (sort) sort.addEventListener('change', function () { state.filter.sort = this.value; renderLibrary(); });
+  }
+
+  function renderCard(c) {
+    const info = categoryInfo(c.category);
+    return `
+      <article class="kcard" data-card="${esc(c.id)}" style="--cat:${info.color};--cat-bg:${info.soft}">
+        <div class="kcard-actions">
+          <button type="button" title="删除卡片" data-del="${esc(c.id)}">${icon('trash', 13)}</button>
+        </div>
+        <div class="kcard-top">
+          <span class="kcard-cat">${esc(c.category)}</span>
+          <span class="kcard-topic">${esc(c.topic)}</span>
+        </div>
+        <h3 class="kcard-title">${esc(c.title)}</h3>
+        <p class="kcard-summary">${esc(c.summary)}</p>
+        <div class="kcard-tags">${(c.tags || []).slice(0, 3).map((t) => `<span class="tag">#${esc(t)}</span>`).join('')}</div>
+        <div class="kcard-foot"><span class="src">${esc(c.sourceLabel)}</span><span>${fmtDate(c.createdAt)}</span></div>
+      </article>`;
+  }
+
+  function openCardModal(id) {
+    const c = data.cards.find((x) => x.id === id);
+    if (!c) return;
+    const info = categoryInfo(c.category);
+    const url = safeUrl(c.url);
+    const body = `
+      <div class="modal-meta">
+        <span class="tag is-accent">${esc(c.category)}</span>
+        <span class="tag">${esc(c.topic)}</span>
+        ${(c.tags || []).map((t) => `<span class="tag">#${esc(t)}</span>`).join('')}
+      </div>
+      <p style="font-size:14px;color:var(--ink-soft)">${esc(c.summary)}</p>
+      ${c.points && c.points.length ? `<h4>要点</h4><ul>${c.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : ''}
+      ${c.quote ? `<blockquote>「${esc(c.quote)}」</blockquote>` : ''}
+      <h4>来源</h4>
+      <p>${esc(c.sourceLabel)} ${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">打开原帖 ${icon('external', 12)}</a>` : ' · 手动粘贴'}</p>
+      <p style="font-size:10.5px;color:var(--muted)">添加于 ${esc(new Date(c.createdAt).toLocaleString('zh-CN'))}</p>`;
+    openModal(modalShell(c.title, `<span class="cat-dot" style="background:${info.color};display:inline-block;width:8px;height:8px;border-radius:50%"></span>`, body, `
+      <button class="btn btn-ghost btn-small" type="button" data-action="card-map" data-id="${esc(c.id)}">${icon('map', 14)} 在导图中查看</button>
+      <button class="btn btn-danger btn-small" type="button" data-action="ask-delete" data-id="${esc(c.id)}">${icon('trash', 14)} 删除</button>
+      <button class="btn btn-ghost btn-small" type="button" data-action="close-modal">关闭</button>`));
+  }
+
+  function askDelete(id) {
+    const c = data.cards.find((x) => x.id === id);
+    if (!c) return;
+    openModal(modalShell('删除这张卡片？', '', `<p>「${esc(c.title)}」会从知识库和思维导图中移除，此操作不能撤销。</p>`, `
+      <button class="btn btn-ghost" type="button" data-action="close-modal">取消</button>
+      <button class="btn btn-danger" type="button" data-action="do-delete" data-id="${esc(id)}">确认删除</button>`));
+  }
+
+  function deleteCard(id) {
+    data.cards = data.cards.filter((c) => c.id !== id);
+    refreshDemoFlag();
+    saveData();
+    closeModal();
+    if (state.view === 'library') renderLibrary();
+    if (state.view === 'map') renderMap();
+    toast('已删除');
+  }
+
+  function clearDemo() {
+    data.cards = data.cards.filter((c) => !c.demo);
+    data.demo = false;
+    saveData();
+    state.analysis = null;
+    toast('示例数据已清空，开始记录自己的知识吧');
+    renderCurrentView();
+  }
+
+  /* ---------------------------------------------------------------- 合并 + 导图 */
+  function mergeCards(cards, threshold, mergeOn) {
+    if (!mergeOn) return cards.map((c) => ({ id: 'g_' + c.id, cards: [c] }));
+    const groups = [];
+    cards.forEach((card) => {
+      let target = null;
+      let bestScore = 0;
+      groups.forEach((g) => {
+        const score = Math.max.apply(null, g.cards.map((x) => cardSimilarity(card, x)));
+        if (score > bestScore) { bestScore = score; target = g; }
+      });
+      if (target && bestScore >= threshold) target.cards.push(card);
+      else groups.push({ id: 'g_' + card.id, cards: [card] });
+    });
+    return groups;
+  }
+
+  function commonTags(cards) {
+    const freq = {};
+    cards.forEach((c) => (c.tags || []).forEach((t) => { freq[t] = (freq[t] || 0) + 1; }));
+    return Object.keys(freq).filter((t) => freq[t] > 1).sort((a, b) => freq[b] - freq[a]).slice(0, 4);
+  }
+
+  function differencesOf(cards) {
+    const diffs = [];
+    const pointKeys = cards.map((c) => (c.points || []).map((p) => bigrams(p)));
+    cards.forEach((c, ci) => {
+      (c.points || []).forEach((p, pi) => {
+        let shared = false;
+        cards.forEach((other, oi) => {
+          if (oi === ci) return;
+          const otherTokens = pointKeys[oi];
+          if (otherTokens.some((tokens) => jaccard(pointKeys[ci][pi], tokens) >= 0.3)) shared = true;
+        });
+        if (!shared) {
+          const text = truncate(p, 70);
+          if (!diffs.some((d) => d.text === text)) diffs.push({ source: c.sourceLabel, text });
+        }
+      });
+    });
+    return diffs.slice(0, 5);
+  }
+
+  function mergeReason(group) {
+    if (group.cards.length <= 1) return '';
+    const tags = commonTags(group.cards);
+    return `这 ${group.cards.length} 张卡片都在讲「${tags.length ? tags.join('、') : group.cards[0].topic}」，观点大面积重叠，所以合并为一支；合并后保留每张卡片的来源和细微差异，避免重复刷屏。`;
+  }
+
+  function buildMapTree() {
+    const cards = data.cards;
+    if (!cards.length) return null;
+    let category = state.map.category;
+    if (!category || !cards.some((c) => c.category === category)) {
+      const counts = {};
+      cards.forEach((c) => { counts[c.category] = (counts[c.category] || 0) + 1; });
+      category = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+    }
+    let catCards = cards.filter((c) => c.category === category);
+    if (state.map.topic) catCards = catCards.filter((c) => c.topic === state.map.topic);
+    const topics = new Map();
+    catCards.forEach((c) => {
+      if (!topics.has(c.topic)) topics.set(c.topic, []);
+      topics.get(c.topic).push(c);
+    });
+    const children = [];
+    Array.from(topics.keys()).sort((a, b) => topics.get(b).length - topics.get(a).length).forEach((topic) => {
+      const groups = mergeCards(topics.get(topic), state.map.threshold, state.map.merge);
+      const groupNodes = groups.map((g) => {
+        const single = g.cards[0];
+        return {
+          id: g.id,
+          type: g.cards.length > 1 ? 'merge' : 'card',
+          label: g.cards.length > 1 ? single.title : single.title,
+          cards: g.cards,
+          differences: g.cards.length > 1 ? differencesOf(g.cards) : [],
+          reason: mergeReason(g)
+        };
+      });
+      children.push({ id: 't_' + topic, type: 'topic', label: topic, cards: topics.get(topic), children: groupNodes });
+    });
+    return { id: 'root', type: 'root', label: category, cards: catCards, children };
+  }
+
+  function layoutMap(root) {
+    const nodeW = { root: 168, topic: 150, card: 230, merge: 230 };
+    const nodeH = { root: 56, topic: 40, card: 60, merge: 66 };
+    const xFor = { root: 26, topic: 270, card: 535, merge: 535 };
+    let cursorY = 40;
+    const leafGap = 74;
+    const collapsed = state.map.collapsed;
+
+    function walk(node) {
+      node.w = nodeW[node.type];
+      node.h = nodeH[node.type];
+      node.x = xFor[node.type];
+      if (node.type === 'topic' && collapsed.has(node.id)) {
+        node.collapsed = true;
+        node.y = cursorY + 18;
+        cursorY += 58;
+        return;
+      }
+      node.collapsed = false;
+      if (!node.children || !node.children.length) {
+        node.y = cursorY + node.h / 2;
+        cursorY += leafGap;
+        return;
+      }
+      node.children.forEach(walk);
+      const first = node.children[0];
+      const last = node.children[node.children.length - 1];
+      node.y = (first.y + last.y) / 2;
+    }
+    walk(root);
+    // 内容较少时垂直居中，避免导图挤在画布顶部
+    const contentH = cursorY - 40;
+    const offsetY = Math.max(0, (600 - contentH) / 2);
+    (function shift(n) { n.y += offsetY; (n.children || []).forEach(shift); })(root);
+    const height = Math.max(600, contentH + 80);
+    const width = 900;
+    return { width, height };
+  }
+
+  function wrapLabel(text, maxChars, maxLines) {
+    const s = String(text || '').replace(/\s+/g, ' ').trim();
+    const lines = [];
+    let cur = '';
+    for (let i = 0; i < s.length; i++) {
+      cur += s[i];
+      if (cur.length >= maxChars) { lines.push(cur); cur = ''; if (lines.length >= maxLines) break; }
+    }
+    if (cur && lines.length < maxLines) lines.push(cur);
+    if (lines.length === maxLines && s.length > lines.join('').length) {
+      lines[maxLines - 1] = truncate(lines[maxLines - 1], maxChars - 1);
+    }
+    return lines.length ? lines : [''];
+  }
+
+  function svgNode(node, selected) {
+    const isSel = selected === node.id;
+    const x = node.x;
+    const y = node.y;
+    const w = node.w;
+    const h = node.h;
+    let cls = 'mnode type-' + node.type + (isSel ? ' is-selected' : '');
+    const stroke = isSel ? ' stroke="#d9784a" stroke-width="2"' : '';
+    let content = '';
+    if (node.type === 'root') {
+      content = `<text class="n-title" x="${w / 2}" y="25" text-anchor="middle">${esc(node.label)}</text>
+        <text class="n-sub" x="${w / 2}" y="42" text-anchor="middle">${node.cards.length} 张卡片 · ${node.children.length} 个主题</text>`;
+    } else if (node.type === 'topic') {
+      const arrow = node.collapsed ? '▸' : '▾';
+      content = `<text class="n-title" x="14" y="25">${esc(truncate(node.label, 10))}</text>
+        <text class="n-sub" x="${w - 14}" y="25" text-anchor="end">${node.cards.length} 张 ${arrow}</text>`;
+    } else {
+      const lines = wrapLabel(node.label, 17, 2);
+      const titleY = lines.length > 1 ? 22 : 26;
+      content = lines.map((line, i) => `<text class="n-title" x="14" y="${titleY + i * 16}">${esc(line)}</text>`).join('');
+      const subY = h - 12;
+      if (node.type === 'merge') {
+        content += `<text class="n-sub" x="14" y="${subY}">${node.cards.length} 张合并 · ${new Set(node.cards.map((c) => c.sourceLabel)).size} 个来源</text>
+          <circle cx="${w - 17}" cy="17" r="10" class="badge"></circle>
+          <text class="badge-text" x="${w - 17}" y="20" text-anchor="middle">${node.cards.length}</text>`;
+      } else {
+        content += `<text class="n-sub" x="14" y="${subY}">${esc(truncate(node.cards[0].sourceLabel, 18))}</text>`;
+      }
+    }
+    return `<g class="${cls}" data-node="${esc(node.id)}" transform="translate(${x},${y - h / 2})">
+      <rect x="0" y="0" width="${w}" height="${h}" rx="12"${stroke}></rect>${content}</g>`;
+  }
+
+  function svgLink(parent, child) {
+    const x1 = parent.x + parent.w;
+    const y1 = parent.y;
+    const x2 = child.x;
+    const y2 = child.y;
+    const mx = (x1 + x2) / 2;
+    const cls = child.type === 'merge' ? 'mlink is-merge' : 'mlink';
+    return `<path class="${cls}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"></path>`;
+  }
+
+  function collectMapNodes(root) {
+    const nodes = [];
+    const links = [];
+    (function walk(n, parent) {
+      nodes.push(n);
+      if (n.collapsed) return;
+      (n.children || []).forEach((c) => { links.push([n, c]); walk(c, n); });
+    })(root, null);
+    return { nodes, links };
+  }
+
+  function renderMap() {
+    document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.nav === 'map'));
+    const cats = Array.from(new Set(data.cards.map((c) => c.category)));
+    const tree = buildMapTree();
+    if (tree) {
+      state.map.category = tree.label;
+      layoutMap(tree);
+    }
+    const catOptions = cats.map((c) => `<option value="${esc(c)}" ${c === state.map.category ? 'selected' : ''}>${esc(c)}</option>`).join('');
+    const topics = tree ? tree.children.map((t) => t.label) : [];
+    const topicOptions = `<option value="">全部主题</option>` + topics.map((t) => `<option value="${esc(t)}" ${t === state.map.topic ? 'selected' : ''}>${esc(t)}</option>`).join('');
+    const mergedCount = tree ? tree.children.reduce((n, t) => n + t.children.filter((g) => g.type === 'merge').length, 0) : 0;
+    const mergedCards = tree ? tree.children.reduce((n, t) => n + t.children.reduce((m, g) => m + (g.type === 'merge' ? g.cards.length - 1 : 0), 0), 0) : 0;
+
+    document.getElementById('main').innerHTML = `
+      <section class="view map">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">03 / 思维导图 · 看见最近学了什么</p>
+            <h1>思维导图</h1>
+            <p class="lede">选一个知识大点，知序会把卡片里重复的观点合并成一支，保留每个来源和它们之间的细微差异。点节点，就能回看对应的卡片。</p>
+          </div>
+          ${tree ? `<div class="stats-row"><span class="stat-chip"><b>${mergedCount}</b>合并节点</span><span class="stat-chip"><b>${mergedCards}</b>重复卡片</span></div>` : ''}
+        </div>
+        ${data.cards.length ? `
+        <div class="map-toolbar">
+          <div class="group"><span>知识大点</span><select class="select" id="map-cat">${catOptions}</select></div>
+          <div class="group"><span>主题</span><select class="select" id="map-topic">${topicOptions}</select></div>
+          <div class="divider"></div>
+          <label class="switch"><input type="checkbox" id="map-merge" ${state.map.merge ? 'checked' : ''} /> 合并相似卡片</label>
+          <div class="group">合并阈值 <input type="range" id="map-threshold" min="0.25" max="0.75" step="0.05" value="${state.map.threshold}" /><span id="threshold-label">${state.map.threshold.toFixed(2)}</span></div>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <button class="btn btn-small btn-ghost" type="button" data-action="map-reset">${icon('refresh', 13)} 重新生成</button>
+            <button class="btn btn-small btn-ghost" type="button" data-action="map-export">${icon('download', 13)} 导出 SVG</button>
+          </div>
+        </div>
+        <div class="map-grid">
+          <div class="map-canvas">
+            <svg id="map-svg" role="img" aria-label="知识思维导图"></svg>
+            <span class="map-hint">拖动空白处平移 · 滚轮缩放 · 点击节点看卡片</span>
+            <div class="map-zoom">
+              <button type="button" data-action="map-zoom-in" aria-label="放大">+</button>
+              <button type="button" data-action="map-zoom-out" aria-label="缩小">−</button>
+              <button type="button" data-action="map-zoom-reset" aria-label="复原">⌂</button>
+            </div>
+          </div>
+          <aside class="panel map-side" id="map-side">${renderMapSide(tree)}</aside>
+        </div>` : `
+        <div class="empty-state" style="margin-top:20px">
+          <div class="empty-icon">${icon('map', 24)}</div>
+          <h3>还没有可以生成导图的卡片</h3>
+          <p>先去收集页理一张知识卡片，知序会把它们连成一张可互动的导图。</p>
+          <button class="btn btn-primary" type="button" data-action="go-collect">${icon('plus', 15)} 去收集</button>
+        </div>`}
+      </section>`;
+
+    const catSel = document.getElementById('map-cat');
+    if (catSel) catSel.addEventListener('change', function () {
+      state.map.category = this.value; state.map.topic = ''; state.map.selected = null;
+      state.map.collapsed.clear();
+      renderMap();
+    });
+    const topicSel = document.getElementById('map-topic');
+    if (topicSel) topicSel.addEventListener('change', function () {
+      state.map.topic = this.value; state.map.selected = null;
+      renderMap();
+    });
+    const mergeBox = document.getElementById('map-merge');
+    if (mergeBox) mergeBox.addEventListener('change', function () {
+      state.map.merge = this.checked;
+      data.settings.merge = this.checked;
+      saveData();
+      renderMap();
+    });
+    const range = document.getElementById('map-threshold');
+    if (range) {
+      range.addEventListener('input', function () {
+        const label = document.getElementById('threshold-label');
+        if (label) label.textContent = Number(this.value).toFixed(2);
+      });
+      range.addEventListener('change', function () {
+        state.map.threshold = Number(this.value);
+        data.settings.threshold = state.map.threshold;
+        saveData();
+        renderMap();
+      });
+    }
+    if (tree) renderMapSvg(tree);
+  }
+
+  function renderMapSvg(tree) {
+    const svg = document.getElementById('map-svg');
+    if (!svg) return;
+    const size = layoutMap(tree);
+    const { nodes, links } = collectMapNodes(tree);
+    const linkHtml = links.map(([p, c]) => svgLink(p, c)).join('');
+    const nodeHtml = nodes.map((n) => svgNode(n, state.map.selected)).join('');
+    svg.setAttribute('viewBox', `0 0 ${size.width} ${size.height}`);
+    svg.innerHTML = `<g id="map-content" transform="translate(${state.map.panX},${state.map.panY}) scale(${state.map.zoom})">
+      ${linkHtml}${nodeHtml}
+    </g>`;
+    bindMapPan(svg);
+  }
+
+  function applyMapTransform() {
+    const g = document.getElementById('map-content');
+    if (g) g.setAttribute('transform', `translate(${state.map.panX},${state.map.panY}) scale(${state.map.zoom})`);
+  }
+
+  function findMapNode(id) {
+    const tree = buildMapTree();
+    if (!tree) return null;
+    let found = null;
+    (function walk(n) {
+      if (n.id === id) found = n;
+      if (n.collapsed) return;
+      (n.children || []).forEach(walk);
+    })(tree);
+    return found;
+  }
+
+  function renderMapSide(tree) {
+    if (!tree) return '';
+    const nodes = [];
+    (function walk(n) { nodes.push(n); (n.children || []).forEach(walk); })(tree);
+    const merges = nodes.filter((n) => n.type === 'merge');
+    const cards = tree.cards.length;
+    const sourceCount = new Set(tree.cards.map((c) => c.sourceLabel)).size;
+    const mergedCardCount = merges.reduce((n, m) => n + m.cards.length, 0);
+    return `
+      <h3>${esc(tree.label)}</h3>
+      <p class="side-sub">${cards} 张卡片 · ${tree.children.length} 个主题 · ${merges.length} 个合并节点</p>
+      <div class="merge-note">${merges.length ? `AI 在 ${cards} 张卡片里找到了 ${merges.length} 处重复观点（涉及 ${mergedCardCount} 张卡片），合并后保留 ${sourceCount} 个来源；点橙色节点看合并原因与差异。` : `目前没有触发合并；把「合并阈值」调低，或再收集几张相似卡片试试。`}</div>
+      <div class="side-sec">
+        <h4>怎么读这张图</h4>
+        <p>最左是知识大点，中间是主题，右边是卡片。橙色节点表示多张卡片被合并，点开可以看到每个来源和它们的细微差异。</p>
+      </div>
+      <div class="legend-row">
+        <span><i style="background:var(--ink)"></i>大点</span>
+        <span><i style="background:var(--paper-2);border:1px solid var(--line-strong)"></i>主题</span>
+        <span><i style="background:var(--orange-soft);border:1px solid rgba(217,120,74,.35)"></i>合并卡片</span>
+      </div>`;
+  }
+
+  function renderMapNodeSide(node) {
+    if (!node) return renderMapSide(buildMapTree());
+    if (node.type === 'root') return renderMapSide(node);
+    const sources = Array.from(new Set(node.cards.map((c) => c.sourceLabel)));
+    if (node.type === 'topic') {
+      return `
+        <h3>${esc(node.label)}</h3>
+        <p class="side-sub">${node.cards.length} 张卡片 · ${node.children.length} 个分支</p>
+        <div class="side-sec"><h4>这个主题下的卡片</h4>
+          ${node.cards.map((c) => `<button class="side-card" type="button" data-card="${esc(c.id)}"><b>${esc(c.title)}</b><span>${esc(c.sourceLabel)}</span></button>`).join('')}
+        </div>
+        <div class="side-sec"><h4>继续</h4><p>点右侧的卡片节点，可以看每张卡片的完整内容；点「返回」回到大点概览。</p>
+        <button class="btn btn-ghost btn-small" type="button" data-action="map-side-root">返回大点概览</button></div>`;
+    }
+    if (node.type === 'merge') {
+      return `
+        <h3>${esc(node.label)}</h3>
+        <p class="side-sub">${node.cards.length} 张卡片合并 · ${sources.length} 个来源</p>
+        <div class="side-sec"><h4>为什么合并</h4><div class="merge-note">${esc(node.reason)}</div></div>
+        <div class="side-sec"><h4>细微差异</h4>
+          ${node.differences.length ? `<ul class="diff-list">${node.differences.map((d) => `<li><b>${esc(d.source)}</b>：${esc(d.text)}</li>`).join('')}</ul>` : '<p>这几张卡片观点高度一致，没有检测到明显差异。</p>'}
+        </div>
+        <div class="side-sec"><h4>来源卡片</h4>
+          ${node.cards.map((c) => `<button class="side-card" type="button" data-card="${esc(c.id)}"><b>${esc(c.title)}</b><span>${esc(c.sourceLabel)}</span></button>`).join('')}
+        </div>
+        <div class="side-sec"><button class="btn btn-ghost btn-small" type="button" data-action="map-side-root">返回大点概览</button></div>`;
+    }
+    return `
+      <h3>${esc(node.cards[0].title)}</h3>
+      <p class="side-sub">${esc(node.cards[0].category)} › ${esc(node.cards[0].topic)}</p>
+      <div class="side-sec"><h4>摘要</h4><p>${esc(node.cards[0].summary)}</p></div>
+      <div class="side-sec"><h4>来源</h4><p>${esc(node.cards[0].sourceLabel)}</p></div>
+      <div class="side-sec"><button class="btn btn-ghost btn-small" type="button" data-card="${esc(node.cards[0].id)}">${icon('cards', 14)} 打开完整卡片</button>
+      <button class="btn btn-link btn-small" type="button" data-action="map-side-root">返回大点概览</button></div>`;
+  }
+
+  function selectMapNode(id) {
+    const node = findMapNode(id);
+    if (!node) return;
+    if (node.type === 'topic') {
+      // 第一次点：看这个主题下的卡片；再点一次：折叠/展开
+      if (state.map.selected === id) {
+        if (state.map.collapsed.has(node.id)) state.map.collapsed.delete(node.id);
+        else state.map.collapsed.add(node.id);
+        renderMap();
+        return;
+      }
+    }
+    state.map.selected = id;
+    const side = document.getElementById('map-side');
+    if (side) side.innerHTML = renderMapNodeSide(node);
+    const tree = buildMapTree();
+    if (tree) renderMapSvg(tree);
+  }
+
+  function bindMapPan(svg) {
+    let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+    svg.onpointerdown = function (e) {
+      if (e.target.closest('.mnode')) return;
+      dragging = true; svg.classList.add('is-panning');
+      sx = e.clientX; sy = e.clientY; ox = state.map.panX; oy = state.map.panY;
+      svg.setPointerCapture && svg.setPointerCapture(e.pointerId);
+    };
+    svg.onpointermove = function (e) {
+      if (!dragging) return;
+      state.map.panX = ox + (e.clientX - sx);
+      state.map.panY = oy + (e.clientY - sy);
+      applyMapTransform();
+    };
+    svg.onpointerup = function () { dragging = false; svg.classList.remove('is-panning'); };
+    svg.onpointercancel = function () { dragging = false; svg.classList.remove('is-panning'); };
+    svg.onwheel = function (e) {
+      e.preventDefault();
+      const rect = svg.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const old = state.map.zoom;
+      const next = clamp(old * (e.deltaY < 0 ? 1.12 : 0.89), 0.45, 2.6);
+      state.map.panX = mx - ((mx - state.map.panX) / old) * next;
+      state.map.panY = my - ((my - state.map.panY) / old) * next;
+      state.map.zoom = next;
+      applyMapTransform();
+    };
+  }
+
+  function exportMapSvg() {
+    const svg = document.getElementById('map-svg');
+    if (!svg) return;
+    const clone = svg.cloneNode(true);
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+    style.textContent = `text{font-family:"PingFang SC","Microsoft YaHei",sans-serif}.mlink{fill:none;stroke:#ddcdbb;stroke-width:1.3}.mlink.is-merge{stroke:#d9784a;stroke-dasharray:4 4}.mnode rect{fill:#fffdf8;stroke:#eadfd2}.mnode.type-root rect{fill:#2f2a24}.mnode.type-root .n-title{fill:#fff9ef;font-size:16px}.mnode.type-topic rect{fill:#f7efe4}.mnode.type-merge rect{fill:#f7e3d5}.mnode .n-title{font-size:12.5px;font-weight:600;fill:#2f2a24}.mnode .n-sub{font-size:10px;fill:#918578}.badge{fill:#d9784a}.badge-text{fill:#fff;font-size:9px}`;
+    clone.insertBefore(style, clone.firstChild);
+    const blob = new Blob([new XMLSerializer().serializeToString(clone)], { type: 'image/svg+xml' });
+    downloadBlob(blob, 'zhixu-mindmap.svg');
+    toast('导图已导出 SVG');
+  }
+
+  /* ---------------------------------------------------------------- 导入导出 */
+  function downloadBlob(blob, filename) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, 'zhixu-knowledge-' + new Date().toISOString().slice(0, 10) + '.json');
+    toast('知识库已导出');
+  }
+
+  function importDataFile(file) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      try {
+        const parsed = JSON.parse(String(reader.result || '{}'));
+        if (!parsed || !Array.isArray(parsed.cards)) throw new Error('格式不对：缺少 cards 数组');
+        data = {
+          version: 1,
+          demo: false,
+          cards: parsed.cards.map(normalizeCard),
+          settings: { threshold: 0.45, merge: true, ...(parsed.settings || {}) },
+          createdAt: parsed.createdAt || new Date().toISOString()
+        };
+        saveData();
+        closeModal();
+        setView('library');
+        toast('已导入 ' + data.cards.length + ' 张卡片');
+      } catch (e) { toast(e.message || '导入失败', 'error'); }
+    };
+    reader.readAsText(file);
+  }
+
+  function openSettings() {
+    const body = `
+      <div class="settings-row"><div><div class="label">解析模式</div><div class="desc">${aiLive ? '已连接本地 AI 服务（server.py）' : '本地规则演示；运行 server.py 可接入星火等大模型'}</div></div><span class="tag ${aiLive ? 'is-accent' : ''}">${aiLive ? 'AI 已连接' : '本地演示'}</span></div>
+      <div class="settings-row"><div><div class="label">数据存储</div><div class="desc">${data.cards.length} 张卡片，保存在当前浏览器的 localStorage；换设备请导出 JSON</div></div><div class="settings-actions">
+        <button class="btn btn-small btn-ghost" type="button" data-action="export-data">${icon('download', 13)} 导出</button>
+        <button class="btn btn-small btn-ghost" type="button" data-action="import-data">${icon('upload', 13)} 导入</button>
+      </div></div>
+      <div class="settings-row"><div><div class="label">分享接收</div><div class="desc">${serverLive ? '已启用：支持链接读取、/share 分享目标与 QQ 分享收件箱' : '启动 server.py 后可用：读取链接、接收 QQ/分享链接'}</div></div><button class="btn btn-small btn-ghost" type="button" data-action="copy-share-template">使用说明</button></div>
+      <div class="settings-row"><div><div class="label">QQ 分享接入</div><div class="desc">用一个新 QQ 小号 + NapCat/OneBot，把链接投递到收件箱；详见 docs/03-QQ分享接入.md</div></div><span class="tag ${serverLive ? 'is-accent' : ''}">${serverLive ? '可联调' : '需启动服务'}</span></div>
+      <div class="settings-row"><div><div class="label">示例数据</div><div class="desc">重置为 8 张示例卡片，方便演示</div></div><button class="btn btn-small btn-ghost" type="button" data-action="reset-demo">恢复示例</button></div>
+      <div class="settings-row"><div><div class="label">清空全部</div><div class="desc">删除当前浏览器里的所有卡片，操作不可撤销</div></div><button class="btn btn-small btn-danger" type="button" data-action="ask-clear-all">清空数据</button></div>
+      <div class="side-sec"><h4>关于知序</h4><p>知序是一个「把刷到的碎片理成自己知识」的 MVP：粘贴或分享小红书笔记，AI 提炼成带来源的卡片，自动归档成谱系，再生成可互动、会合并重复观点的思维导图。</p></div>`;
+    openModal(modalShell('设置与数据', '', body, `<button class="btn btn-ghost" type="button" data-action="close-modal">关闭</button>`));
+  }
+
+  function askClearAll() {
+    openModal(modalShell('清空全部数据？', '', `<p>将删除 ${data.cards.length} 张卡片，且不能撤销。建议先导出 JSON 备份。</p>`, `
+      <button class="btn btn-ghost" type="button" data-action="close-modal">取消</button>
+      <button class="btn btn-danger" type="button" data-action="do-clear-all">确认清空</button>`));
+  }
+
+  /* ---------------------------------------------------------------- 路由/壳 */
+  function setView(view, pushHash) {
+    if (!PAGE_TITLES[view]) view = 'collect';
+    state.view = view;
+    if (pushHash !== false) {
+      const hash = '#' + view;
+      if (location.hash !== hash) history.replaceState(null, '', hash);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderCurrentView();
+  }
+
+  function renderCurrentView() {
+    if (state.view === 'library') renderLibrary();
+    else if (state.view === 'map') renderMap();
+    else renderCollect();
+  }
+
+  function handleAction(action, el) {
+    switch (action) {
+      case 'fill-sample': {
+        const ta = document.getElementById('paste-text');
+        const url = document.getElementById('paste-url');
+        if (ta) ta.value = SAMPLE_TEXT;
+        if (url) url.value = 'https://www.xiaohongshu.com/explore/sample-note';
+        updateCharCount();
+        ta && ta.focus();
+        toast('示例笔记已放入，点「理成知识卡片」试试');
+        break;
+      }
+      case 'analyze': runAnalyze(); break;
+      case 'resolve-link': {
+        const urlEl = document.getElementById('paste-url');
+        resolveLink(urlEl ? urlEl.value.trim() : '');
+        break;
+      }
+      case 'refresh-inbox': loadInbox(); break;
+      case 'use-inbox': useInboxItem(el.dataset.id); break;
+      case 'drop-inbox': removeInboxItem(el.dataset.id); break;
+      case 'open-inbox': {
+        if (!serverLive) { toast('启动 server.py 后才能接收 QQ/分享链接', 'error'); break; }
+        setView('collect');
+        setTimeout(() => {
+          const panel = document.getElementById('inbox-panel');
+          if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 120);
+        break;
+      }
+      case 'copy-share-template': {
+        const text = '在浏览器打开 知序 后，把链接粘到「帖子链接」输入框，点「读取链接」。如果从手机分享，可把知序添加到主屏幕后使用系统分享。';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => toast('分享说明已复制')).catch(() => toast('复制失败', 'error'));
+        } else {
+          toast('请手动复制：把链接粘到「帖子链接」输入框');
+        }
+        break;
+      }
+      case 'save-card': saveCardFromForm(); break;
+      case 'reanalyze': {
+        state.analysis = null;
+        renderCollect();
+        const ta = document.getElementById('paste-text');
+        if (ta) ta.focus();
+        break;
+      }
+      case 'discard-result': state.analysis = null; renderCollect(); break;
+      case 'go-collect': setView('collect'); break;
+      case 'clear-demo': clearDemo(); break;
+      case 'export-data': exportData(); break;
+      case 'import-data': {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'application/json,.json';
+        input.onchange = function () { if (input.files && input.files[0]) importDataFile(input.files[0]); };
+        input.click();
+        break;
+      }
+      case 'reset-demo': {
+        data = seedData(); saveData(); closeModal(); renderCurrentView(); toast('示例数据已恢复'); break;
+      }
+      case 'ask-clear-all': askClearAll(); break;
+      case 'do-clear-all': {
+        data = { version: 1, demo: false, cards: [], settings: data.settings, createdAt: new Date().toISOString() };
+        saveData(); closeModal(); renderCurrentView(); toast('已清空'); break;
+      }
+      case 'close-modal': closeModal(); break;
+      case 'ask-delete': askDelete(el.dataset.id); break;
+      case 'do-delete': deleteCard(el.dataset.id); break;
+      case 'card-map': {
+        const c = data.cards.find((x) => x.id === el.dataset.id);
+        closeModal();
+        if (c) { state.map.category = c.category; state.map.topic = ''; state.map.selected = null; state.map.collapsed.clear(); setView('map'); }
+        break;
+      }
+      case 'map-reset': state.map.selected = null; state.map.zoom = 1; state.map.panX = 0; state.map.panY = 0; state.map.collapsed.clear(); renderMap(); break;
+      case 'map-export': exportMapSvg(); break;
+      case 'map-side-root': state.map.selected = null; renderMap(); break;
+      case 'map-zoom-in': state.map.zoom = clamp(state.map.zoom * 1.18, 0.45, 2.6); applyMapTransform(); break;
+      case 'map-zoom-out': state.map.zoom = clamp(state.map.zoom * 0.85, 0.45, 2.6); applyMapTransform(); break;
+      case 'map-zoom-reset': state.map.zoom = 1; state.map.panX = 0; state.map.panY = 0; applyMapTransform(); break;
+      default: break;
+    }
+  }
+
+  /* ---------------------------------------------------------------- 事件绑定 */
+  document.addEventListener('click', function (e) {
+    const navBtn = e.target.closest('[data-nav]');
+    if (navBtn) { e.preventDefault(); setView(navBtn.dataset.nav); return; }
+
+    const tab = e.target.closest('[data-nav]');
+    if (tab) return;
+
+    const cardEl = e.target.closest('[data-card]');
+    const delBtn = e.target.closest('[data-del]');
+    if (delBtn) { e.preventDefault(); e.stopPropagation(); askDelete(delBtn.dataset.del); return; }
+    if (cardEl) {
+      const id = cardEl.dataset.card;
+      if (id) { openCardModal(id); return; }
+    }
+
+    const catBtn = e.target.closest('[data-cat]');
+    if (catBtn) {
+      const cat = catBtn.dataset.cat;
+      const topic = catBtn.dataset.topic || '';
+      if (!cat && !topic) {
+        state.filter.category = ''; state.filter.topic = '';
+      } else if (topic) {
+        state.filter.category = cat; state.filter.topic = topic;
+      } else {
+        const wrap = catBtn.closest('.tree-cat');
+        if (state.filter.category === cat && !state.filter.topic && wrap) {
+          state.filter.category = ''; state.filter.topic = '';
+        } else {
+          state.filter.category = cat; state.filter.topic = '';
+          state.openCats.add(cat);
+        }
+      }
+      renderLibrary();
+      return;
+    }
+
+    const actionEl = e.target.closest('[data-action]');
+    if (actionEl) {
+      e.preventDefault();
+      handleAction(actionEl.dataset.action, actionEl);
+      return;
+    }
+
+    const nodeEl = e.target.closest('.mnode');
+    if (nodeEl) {
+      e.preventDefault();
+      selectMapNode(nodeEl.dataset.node);
+      return;
+    }
+  });
+
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'paste-text') updateCharCount();
+    if (e.target.id === 'edit-category') {
+      const field = document.getElementById('new-cat-field');
+      if (field) field.hidden = e.target.value !== '__new__';
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      if (document.getElementById('paste-text') && state.view === 'collect' && !state.analysis) runAnalyze();
+      else if (state.analysis) saveCardFromForm();
+    }
+  });
+
+  window.addEventListener('hashchange', function () {
+    const view = (location.hash || '#collect').slice(1);
+    if (PAGE_TITLES[view] && view !== state.view) setView(view, false);
+  });
+
+  /* ---------------------------------------------------------------- 启动 */
+  function boot() {
+    data = loadData();
+    const hashView = (location.hash || '#collect').slice(1);
+    state.view = PAGE_TITLES[hashView] ? hashView : 'collect';
+    if (data.cards.length) {
+      const first = data.cards[0];
+      state.openCats.add(first.category);
+      state.map.category = first.category;
+    }
+    state.map.threshold = data.settings.threshold || 0.45;
+    state.map.merge = data.settings.merge !== false;
+    document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.nav === state.view));
+    renderCurrentView();
+    detectAI().then(() => handleSharedParams());
+  }
+
+  boot();
+})();
+
+</script>
+</body>
+</html>
