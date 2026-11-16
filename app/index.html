@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fbf6ee" />
+  <meta name="description" content="知序 · 把刷到的碎片，理成自己的知识。小红书笔记 AI 知识卡片与思维导图 MVP。" />
+  <title>知序 · 把刷到的碎片，理成自己的知识</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css?v=20261113b" />
+</head>
+<body>
+  <div class="page-grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" data-nav="collect" aria-label="知序首页">
+      <span class="brand-mark" aria-hidden="true">
+        <span class="jar-lid"></span>
+        <span class="jar-body">知</span>
+      </span>
+      <span class="brand-text">
+        <strong>知序</strong>
+        <small>把刷到的碎片，理成自己的知识</small>
+      </span>
+    </a>
+
+    <nav class="tabs" aria-label="主导航">
+      <button class="tab is-active" type="button" data-nav="collect"><span class="tab-num">01</span>收集</button>
+      <button class="tab" type="button" data-nav="library"><span class="tab-num">02</span>知识库</button>
+      <button class="tab" type="button" data-nav="map"><span class="tab-num">03</span>思维导图</button>
+    </nav>
+
+    <div class="top-actions">
+      <span class="ai-badge" id="ai-badge" title="当前解析模式">
+        <span class="dot"></span><span id="ai-badge-text">本地演示</span>
+      </span>
+      <button class="icon-btn inbox-btn" id="btn-inbox" type="button" title="来自分享的链接" aria-label="分享收件箱" data-action="open-inbox">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v13H4z"/><path d="M4 13h4l2 3h4l2-3h4"/></svg>
+        <span class="inbox-badge" id="inbox-badge" hidden>0</span>
+      </button>
+      <button class="icon-btn" id="btn-account" type="button" title="账号与云同步" aria-label="账号" data-action="account-open">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-3.6 3.4-6 7.5-6s7.5 2.4 7.5 6"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-settings" type="button" title="设置与数据" aria-label="设置与数据" data-action="open-settings">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6h.09A1.7 1.7 0 0 0 10.1 3.05V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.09a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1"></main>
+
+  <footer class="site-foot">
+    <span>知序 MVP · 本地优先，数据只存在你的浏览器</span>
+    <span class="foot-sep">·</span>
+    <span>灵感来自小红书笔记，沉淀成自己的知识谱系</span>
+  </footer>
+
+  <div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
+  <div class="modal-root" id="modal-root" hidden></div>
+
+  <script src="app.js?v=20261113b" defer></script>
+  <script>
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      });
+    }
+  </script>
+</body>
+</html>
