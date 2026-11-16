@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LagrangeDev/Lagrange.Core/master/Lagrange.OneBot/Resources/appsettings_schema.json",
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "SignServerUrl": "",
+  "SignProxyUrl": "",
+  "MusicSignServerUrl": "",
+  "Account": {
+    "Uin": 3316184822,
+    "Protocol": "Linux",
+    "AutoReconnect": true,
+    "GetOptimumServer": true
+  },
+  "Message": {
+    "IgnoreSelf": true,
+    "StringPost": false
+  },
+  "QrCode": {
+    "ConsoleCompatibilityMode": true
+  },
+  "Implementations": [
+    {
+      "Type": "ForwardWebSocket",
+      "Host": "127.0.0.1",
+      "Port": 3001,
+      "Suffix": "",
+      "HeartBeatInterval": 5000,
+      "AccessToken": "zhixu-qq-token"
+    }
+  ]
+}

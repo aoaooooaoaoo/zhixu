@@ -1,0 +1,14 @@
+[Unit]
+Description=Lagrange OneBot (QQ bot for Zhixu)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/lagrange/Lagrange.OneBot/bin/Release/net9.0/linux-x64/publish
+ExecStart=/opt/lagrange/Lagrange.OneBot/bin/Release/net9.0/linux-x64/publish/Lagrange.OneBot
+Restart=always
+RestartSec=8
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+[Install]
+WantedBy=multi-user.target

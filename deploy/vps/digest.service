@@ -1,0 +1,9 @@
+[Unit]
+Description=Zhixu daily digest (catch sources, analyze, inbox, push)
+After=network.target zhixu.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/zhixu
+ExecStart=/opt/node/bin/node /opt/zhixu/digest.mjs
+TimeoutStartSec=900

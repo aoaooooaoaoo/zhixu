@@ -1,0 +1,17 @@
+{
+  "webUrl": "http://47.86.32.77:8080/",
+  "maxPerSource": 4,
+  "sources": [
+    { "type": "keyword", "name": "西安交大", "keyword": "西安交通大学" },
+    { "type": "keyword", "name": "交大创新港", "keyword": "西安交大 创新港" }
+  ],
+  "notify": {
+    "qmsgKey": "77d953bf173b5a1aac50ec001394eca3d0e3c6dc",
+    "smtp": {
+      "url": "smtps://smtp.qq.com:465",
+      "user": "",
+      "pass": ""
+    },
+    "emailTo": "3316184822@qq.com"
+  }
+}
