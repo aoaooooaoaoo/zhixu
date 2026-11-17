@@ -51,3 +51,7 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+
+# ---------- Netlify 本地缓存 / 函数打包产物 ----------
+web/.netlify/
+
