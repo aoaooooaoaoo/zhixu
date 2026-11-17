@@ -202,6 +202,7 @@ systemctl restart zhixu
 | 文档 | 说明 |
 |---|---|
 | [docs/使用说明书.docx](docs/使用说明书.docx) | 图文版使用说明（9 张截图，覆盖全部功能） |
+| [docs/知序作品介绍文档.docx](docs/知序作品介绍文档.docx) | 参赛作品介绍（详情/使用方式/亮点/AI 落地/关键技术/图片/发表获奖/优化说明） |
 | [docs/知序技术文档.docx](docs/知序技术文档.docx) | 参赛技术文档（架构 / AI 方案 / 实现 / 测试 / 创新点） |
 | [docs/使用说明书.md](docs/使用说明书.md) | 使用说明 Markdown 版 |
 | [app/README.md](app/README.md) | 前端与本地服务说明 |
