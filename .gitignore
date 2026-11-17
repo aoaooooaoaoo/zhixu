@@ -55,3 +55,7 @@ desktop.ini
 # ---------- Netlify 本地缓存 / 函数打包产物 ----------
 web/.netlify/
 
+
+# ---------- 发布打包产物（本地生成） ----------
+release-package/
+
