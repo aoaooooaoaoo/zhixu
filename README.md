@@ -211,6 +211,28 @@ systemctl restart zhixu
 | [integrations/mcp/README.md](integrations/mcp/README.md) | MCP 工具接入说明 |
 | [integrations/qq/README.md](integrations/qq/README.md) | QQ 桥接说明 |
 
+## 代码规范约定
+
+- **格式**：2 空格缩进、UTF-8、LF 换行（Windows 脚本除外，见 `.gitattributes`），由 `.editorconfig` 约束。
+- **命名**：JS 使用 `camelCase`，常量用 `UPPER_SNAKE_CASE`，文件/目录用小写短横线。
+- **注释**：每个模块顶部写明职责与路由；复杂逻辑（反爬、容错解析、降级策略）必须用中文注释说明「为什么」。
+- **接口**：函数统一返回 `{ ok, ... }` 结构；错误信息面向用户可读，不泄露内部堆栈。
+- **安全**：密钥只读环境变量；前端不接触模型 key；用户输入统一截断与转义。
+- **提交**：遵循 Conventional Commits（`feat:` / `fix:` / `test:` / `docs:` / `chore:`）。
+
+## 本地开发流程
+
+```bash
+# 修改前端后重新构建
+node web/build.js --clean
+
+# 修改服务端函数后，重新组装并启动
+node deploy/vps/prepare.mjs && node deploy/vps/server.mjs
+
+# 提交前跑一遍测试
+node tests/portability.test.mjs
+```
+
 ## 团队信息
 
 | 角色 | 姓名 | 分工 |
